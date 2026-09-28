@@ -1,0 +1,32 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# jookoi-md-mcp runtime (lock/audit outside vault/, per plan's config-specifics note)
+jookoi-md-mcp/.locks/
+jookoi-md-mcp/audit.log
+jookoi-md-mcp/*.log
+jookoi-md-mcp/*.jsonl
+jookoi-md-mcp/mcp.env
+
+
+# Node (skills, tooling)
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local secrets / env
+# _jookoi- prefix = private and untracked, at any depth. Vault secrets live in
+# vault/reference/_jookoi-secrets.md (decision 004). Kept here as well as in the
+# global gitignore so a fresh machine without the global rule can't commit them.
+_jookoi-*
+.env
+.env.local
+*.local.env

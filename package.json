@@ -1,0 +1,46 @@
+{
+  "name": "jookoi-corporate-env-personal-assistant",
+  "version": "1.0.0",
+  "description": "Corporate second-brain template: plain markdown vault, local WSL/macOS HTTP MCP server, multi-client support.",
+  "private": true,
+  "scripts": {
+    "// mcp:start": "Start the MCP server in foreground (auto-detects macOS, Linux, Git Bash, or WSL).",
+    "mcp:start": "bash ./run-mcp.sh",
+
+    "// mcp:start:bg": "Start the MCP server in background so the current terminal stays free.",
+    "mcp:start:bg": "bash ./run-mcp.sh --bg",
+
+    "// mcp:start:win": "Start the MCP server in foreground using native Windows PowerShell.",
+    "mcp:start:win": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\run-mcp.ps1",
+
+    "// mcp:start:win:bg": "Start the MCP server in background using native Windows PowerShell.",
+    "mcp:start:win:bg": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\run-mcp.ps1 -Background",
+
+    "// mcp:stop": "Stop any active jookoi-md-mcp server process (WSL on Windows, native on macOS/Linux).",
+    "mcp:stop": "node scripts/stop-mcp.js",
+
+    "// mcp:health": "Ping the MCP server health endpoint (http://127.0.0.1:8008/health) to verify index readiness.",
+    "mcp:health": "curl -s http://127.0.0.1:8008/health",
+
+    "// test": "Run the pytest test suite for jookoi-md-mcp (WSL on Windows, native uv on macOS/Linux).",
+    "test": "node scripts/run-tests.js",
+
+    "// mcp:test": "Alias for test: runs jookoi-md-mcp pytest suite.",
+    "mcp:test": "node scripts/run-tests.js",
+
+    "// paper-trail:list": "List active (now) development work items in _architecture/items.yaml.",
+    "paper-trail:list": "node scripts/paper-trail.js list",
+
+    "// paper-trail:check": "Validate the structure and schema conformity of all paper-trail managed files.",
+    "paper-trail:check": "node scripts/paper-trail.js check",
+
+    "// paper-trail:sweep": "Check for unrecorded changes or stale docs across git working tree vs items.yaml.",
+    "paper-trail:sweep": "node scripts/paper-trail.js sweep",
+
+    "// paper-trail:flush": "Flush completed and dropped items from items.yaml into _architecture/archive/.",
+    "paper-trail:flush": "node scripts/paper-trail.js flush",
+
+    "// skill:link": "Links jookoi-brain-mcp and jookoi-brain-api skills to ~/.agents/skills/ for harness discovery.",
+    "skill:link": "node scripts/link-skill.js"
+  }
+}

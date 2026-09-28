@@ -1,0 +1,6 @@
+# Core runtime dependencies for jookoi-md-mcp
+# Install the package and these dependencies with: python3 -m venv .venv && .venv/bin/python -m pip install -e .
+fastmcp>=3.4.7
+python-frontmatter>=1.1
+filelock>=3.13
+PyYAML>=6.0

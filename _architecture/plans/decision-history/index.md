@@ -1,0 +1,7 @@
+# Decision history
+
+- [001 WSL HTTP transport and port 8008 binding](001-wsl-http-transport-and-port-8008-binding.md): Runs single shared FastMCP HTTP server in WSL on port 8008 to bypass native Windows Python security limitations and avoid multi-client lock/index contention.
+- [002 Decoupling from Obsidian plugins and Meld Encrypt in corporate vault](002-decoupling-from-obsidian-plugins-and-meld-encrypt-in-corpora.md): Eliminates Obsidian app and Meld Encrypt dependencies, routing secrets exclusively to enterprise password managers and treating markdown structures as deterministic MCP data contracts.
+- [003 Vault instructions rebuilt for corporate work use](003-vault-instructions-rebuilt-for-corporate-work-use.md): why the vault is work-only and how the external corporate draft was corrected (wikilink provenance, Waiting vs Follow-ups, no auto-⏫ on PR reviews).
+- [004 Credentials stored in full in a git-ignored vault file](004-credentials-stored-in-full-in-a-git-ignored-vault-file.md): why credential values live in full in `reference/_jookoi-secrets.md` (git-ignored) and never in tracked notes. Supersedes the credentials part of 002.
+- [005 Use standard Python installation and polling for the vault server](005-use-standard-python-installation-and-polling-for-the-vault-s.md): Removes `uv` and `watchdog` as runtime requirements while documenting that FastMCP still pulls native wheels.

@@ -1,0 +1,295 @@
+repo: jookoi-corporate-env-personal-assistant
+last_flush: null
+items:
+  mey7:
+    title: Build Repo A skeleton per plan
+    status: done
+    priority: 1000
+    body: |-
+      Cross-repo: JooKoi-vault item `c9vd` tracks this build from the vault side. Plan: `C:\JooKoi-vault\_architecture\plans\2026-09-28-corporate-env-personal-assistant.md`.
+
+      Build complete and verified end to end:
+      - vault/ skeleton + jookoi-md-mcp/ (obsidian-mcp v2.1.0 + 3 patches) — structural build.
+      - uv sync in WSL Ubuntu: 80 packages, obsidian_mcp + obsidian_mcp.jookoi import clean.
+      - HTTP server running (127.0.0.1:8008, Bearer auth), health + /mcp endpoints verified.
+      - All 3 clients wired: Copilot CLI, VS Code Copilot, Gemini CLI/Antigravity.
+      - E2E verified: read, search, write+readback, briefing, audit/telemetry logging all confirmed working.
+      - Instructions/procedures cleanup sweep done (Meld Encrypt/phone refs replaced with generic equivalents).
+
+      Full detail: HANDOFF.md at repo root.
+
+      Next: git init + initial commit (user-triggered), seed Repo B on corp remote, verify Copilot org MCP policy on corp machine.
+    ts_created: 2026-09-28T13:07:30Z
+    ts_started: 2026-09-28T13:07:30Z
+    ts_done: 2026-09-28T19:37:37Z
+    ts_touched: 2026-09-28T19:37:37Z
+  y76u:
+    title: Seed Repo B on corporate remote from Repo A
+    status: now
+    priority: 2000
+    body: |-
+      Repo A skeleton and MCP runtime are complete and verified end-to-end. Next steps:
+      1. User initializes git in Repo A (`git init`) and creates the baseline commit.
+      2. Clone/init Repo B on the private corp remote.
+      3. Seed Repo B with the Repo A skeleton (vault skeleton, jookoi-md-mcp, launchers, AGENTS.md).
+      4. On the corp machine: verify WSL availability and org Copilot MCP policy.
+    ts_created: 2026-09-28T19:37:46Z
+    ts_started: 2026-09-28T19:37:46Z
+    ts_done: null
+    ts_touched: 2026-09-28T19:54:06Z
+  l5i1:
+    title: Rebuild _architecture/ structure and ARCHITECTURE.md for non-Obsidian corporate stack
+    status: done
+    priority: 3000
+    body: |-
+      The initial _architecture/ layout was a minimal placeholder and ARCHITECTURE.md carried old references. This item tracks restructuring _architecture/ to conform to the full jookoi-paper-trail standard and rewriting ARCHITECTURE.md from the ground up for the corporate environment (no Obsidian app, no sync, local WSL HTTP MCP server, plain markdown vault, 3 AI clients).
+
+      Tasks:
+      1. Rebuild ARCHITECTURE.md completely: clean topology, exact data layer, MCP server mechanics, WSL runtime details, fixed-heading dependencies, client configuration protocols, and security boundaries.
+      2. Establish proper _architecture/ folders: plans/ (with mirror of the build plan), plans/decision-history/, archive/.
+      3. Record initial architecture decisions in plans/decision-history/ (e.g. WSL HTTP transport, port 8008 selection, single-user auth model).
+      4. Run paper-trail check to verify conformity.
+    ts_created: 2026-09-28T19:38:58Z
+    ts_started: 2026-09-28T19:38:58Z
+    ts_done: 2026-09-28T19:40:52Z
+    ts_touched: 2026-09-28T19:40:52Z
+  wdk0:
+    title: Migrate remaining Obsidian-app assumptions out of vault/ instructions
+    status: done
+    priority: 4000
+    body: |-
+      Found via repo-wide grep after the user flagged that a parallel session had left stale Obsidian-app assumptions in vault/ despite the ARCHITECTURE.md rebuild (l5i1) already being done. Scope: vault/ instruction and procedure files only — jookoi-md-mcp/src/obsidian_mcp/* package name and the obsidian-mcp source-repo references stay untouched by design (documented in ARCHITECTURE.md, renaming breaks the 3 patches).
+
+      Fixed:
+      - `_procedures/obsidian-syntax.md` renamed to `vault-syntax.md`, retitled "Vault syntax conventions", reframed: no Obsidian app reads this vault, conventions kept for portability not because a plugin runs them.
+      - `_AI_INSTRUCTIONS.md`: `procedure:obsidian-syntax` reference updated to `procedure:vault-syntax` (2 spots), "Obsidian Tasks syntax" reframed to "this vault's task syntax, no plugin required".
+      - `_procedures/daily-close.md`: "typing in Obsidian" → "typing directly into the note"; "Obsidian comment line" → "hidden marker line (plain text, not rendered specially by any viewer)".
+      - `vault-syntax.md` Common failure modes: "where the Tasks plugin expects" → "where the task format expects".
+
+      Verified via repo-wide grep: only remaining Obsidian mention in vault/ is the deliberate explanatory line in vault-syntax.md's intro. jookoi-md-mcp/'s obsidian_mcp package/module references are intentional and out of scope (see ARCHITECTURE.md).
+    ts_created: 2026-09-28T19:43:19Z
+    ts_started: 2026-09-28T19:43:19Z
+    ts_done: 2026-09-28T19:43:25Z
+    ts_touched: 2026-09-28T19:43:25Z
+  t2lg:
+    title: Prune upstream Docker artifacts and replace empty gitkeep files
+    status: done
+    priority: 5000
+    body: |-
+      Surgically prune upstream obsidian-mcp artifacts that do not apply to this workstation-based WSL HTTP deployment, and replace all empty .gitkeep files with informative markdown files.
+
+      Actions:
+      1. Remove Docker and multi-vault upstream dead weight:
+         - jookoi-md-mcp/Dockerfile
+         - jookoi-md-mcp/docker-compose.yml
+         - jookoi-md-mcp/docker-compose.home-server.yml
+         - jookoi-md-mcp/vaults.json.example
+         - jookoi-md-mcp/scripts/release.sh
+         - jookoi-md-mcp/tests/test_home_server_compose.py
+      2. Replace empty .gitkeep files across vault/ and _architecture/ with descriptive Markdown placeholders explaining the folder's role and convention.
+      3. Verify pytest suite in WSL passes cleanly.
+      4. Run paper-trail check and sweep.
+    ts_created: 2026-09-28T19:50:00Z
+    ts_started: 2026-09-28T19:50:00Z
+    ts_done: 2026-09-28T19:53:54Z
+    ts_touched: 2026-09-28T19:53:54Z
+  f1lt:
+    title: Cross-platform MCP runner scripts and root package.json command hub
+    status: done
+    priority: 6000
+    body: |-
+      Make MCP runners environment-agnostic (Git Bash, WSL, macOS, Linux, PowerShell) and establish root package.json with centralized shortcut commands and inline JSON comments.
+
+      Tasks:
+      1. Add cross-platform `run-mcp.sh` at repo root:
+         - On macOS / native Linux: runs uv directly against jookoi-md-mcp with local Python.
+         - On Windows (Git Bash / MSYS / Cygwin): invokes WSL runner seamlessly or directly when already in WSL.
+         - Supports foreground and `--bg` / `-b` background flags.
+      2. Keep `run-mcp.ps1` for native Windows PowerShell users.
+      3. Create root `package.json` with shortcut commands and inline `// <command>` explanations:
+         - `mcp:start`: Start MCP server in foreground
+         - `mcp:start:bg`: Start MCP server in background
+         - `mcp:health`: Run health check endpoint
+         - `mcp:test`: Run pytest test suite in WSL / native
+         - `paper-trail:check`: Validate paper-trail conformity
+         - `paper-trail:sweep`: Run paper-trail sweep
+         - `paper-trail:list`: List active paper-trail items
+      4. Verify scripts and command execution.
+    ts_created: 2026-09-28T20:03:03Z
+    ts_started: 2026-09-28T20:03:03Z
+    ts_done: 2026-09-28T20:05:01Z
+    ts_touched: 2026-09-28T20:05:01Z
+  qtl6:
+    title: Relocate handoff, rewrite README, and build jookoi-brain-mcp harness skill
+    status: done
+    priority: 7000
+    body: |-
+      Relocate build handoff doc to _architecture/plans/implemented/, rewrite repository README.md from scratch, and create corporate-assistant harness skill for cross-project AI integration.
+
+      Tasks:
+      1. Move root HANDOFF.md to _architecture/plans/implemented/2026-09-28-repo-a-build-handoff.md.
+      2. Rewrite root README.md from scratch:
+         - Architecture, single-machine design, transport topology
+         - Prerequisites and setup guide (WSL/Ubuntu on Windows, native uv on macOS/Linux)
+         - MCP server configuration and endpoints (127.0.0.1:8008, Bearer auth)
+         - Configuration snippets for AI clients (Copilot CLI, VS Code Copilot, Gemini CLI, Claude Code)
+         - Centralized npm command reference
+         - Vault structure and procedures overview
+      3. Create harness skill `skills/corporate-assistant/SKILL.md`:
+         - Explains vault purpose, server endpoint, auth, and tool surface
+         - Dynamic procedure loading via `vault_get_vault_conventions`
+         - Domain rules: waking-day convention, secret boundaries, assistant behavior
+      4. Add `skill:link` shortcut in package.json to link the skill to ~/.agents/skills/corporate-assistant.
+      5. Verify paper-trail check and sweep.
+    ts_created: 2026-09-28T20:06:06Z
+    ts_started: 2026-09-28T20:06:06Z
+    ts_done: 2026-09-28T20:07:20Z
+    ts_touched: 2026-09-28T20:07:20Z
+  y25k:
+    title: Purge remaining Obsidian references across codebase, instructions, and server strings
+    status: done
+    priority: 8000
+    body: |-
+      Perform a thorough sweep across the project to purge, modernize, and decouple remaining Obsidian references:
+      1. AGENTS.md, README.md, vault-syntax.md, SKILL.md: modernize wording to reflect a standalone markdown knowledge vault without obsolete app baggage.
+      2. mcp.env and mcp.env.example: remove .obsidian/ from default deny and exclude paths.
+      3. Server strings and prompts (jookoi.py, server.py): reframe system prompts and instructions from "Obsidian vault" / "obsidian-mcp" to "jookoi-md-mcp" and "Markdown vault".
+      4. jookoi-md-mcp/README.md and docs/: rewrite/clean upstream documentation to reflect the actual corporate setup rather than the upstream cloud-sync project.
+      5. pyproject.toml: update package description and metadata.
+      6. Verify pytest test suite passes completely.
+    ts_created: 2026-09-28T20:12:36Z
+    ts_started: 2026-09-28T20:12:36Z
+    ts_done: 2026-09-28T20:17:39Z
+    ts_touched: 2026-09-28T20:17:39Z
+  j3yp:
+    title: Refine naming to jookoi-md-mcp and add jookoi-brain-api skill for direct HTTP usage
+    status: done
+    priority: 9000
+    body: |-
+      1. Replace generic capitalized "Vault" descriptions with the explicit MCP product name `jookoi-md-mcp` (vault is simply the target folder `vault/`).
+      2. Create sibling skill `skills/jookoi-brain-api/SKILL.md` allowing AI agents and scripts to interface with the backend directly over HTTP without MCP client configuration:
+         - Endpoints: /mcp (JSON-RPC tools/call) and /health
+         - Expected tool arguments, JSON schemas, headers, and response envelopes
+         - Concrete curl examples for read, search, write, briefing, and task operations
+      3. Update `scripts/link-skill.js` to link both `jookoi-brain-mcp` and `jookoi-brain-api` into ~/.agents/skills/.
+      4. Update README.md and package.json to reflect both skills and refined naming.
+    ts_created: 2026-09-28T20:20:00Z
+    ts_started: 2026-09-28T20:20:00Z
+    ts_done: 2026-09-28T20:26:33Z
+    ts_touched: 2026-09-28T20:26:33Z
+  epa0:
+    title: Restart MCP server and test the corporate vault rules end to end
+    status: parked
+    priority: 0
+    body: |-
+      Instructions, skeleton and all procedures are rebuilt for work use (decisions 003, 004). Credentials live in `vault/reference/_jookoi-secrets.md`, git-ignored.
+
+      State 28-09-2026: the server was stopped for a restart (`scripts/stop-mcp.js`), and `run-mcp.sh --bg` did not bring it back (health never answered). Parked because the owner is refactoring the server layout (removing a stray obsidian-mcp subfolder).
+
+      Next, once the refactor lands: start the server and confirm `WRITE_PATHS` includes `teams/` (not `work/` or `research/`). Then run one triage pass on a test capture holding a task, a PR review, a blocker, a colleague fact and a fake token. Check:
+      - the token lands only in `_jookoi-secrets.md` and is replaced in the capture
+      - the capture moves to `Inbox/_done/`
+      - `git status` doesn't show the secrets file
+    ts_created: 2026-09-28T21:03:01Z
+    ts_started: 2026-09-28T21:03:01Z
+    ts_done: null
+    ts_touched: 2026-09-28T21:19:14Z
+  ynf3:
+    title: Rename internal Python package from obsidian_mcp to jookoi_md_mcp
+    status: done
+    priority: 10000
+    body: |-
+      Complete the package rename properly:
+      1. Rename directory `jookoi-md-mcp/src/obsidian_mcp` to `jookoi-md-mcp/src/jookoi_md_mcp`.
+      2. Update `pyproject.toml` package definition, entrypoint, and project name to `jookoi-md-mcp` / `jookoi_md_mcp`.
+      3. Rewrite all imports across `src/` and `tests/` from `obsidian_mcp` to `jookoi_md_mcp`.
+      4. Update `run.sh` to execute `jookoi-md-mcp`.
+      5. Run `uv sync` in WSL to install package cleanly.
+      6. Verify all pytest tests pass in WSL.
+    ts_created: 2026-09-28T21:17:28Z
+    ts_started: 2026-09-28T21:17:28Z
+    ts_done: 2026-09-28T21:22:03Z
+    ts_touched: 2026-09-28T21:22:03Z
+  zi10:
+    title: Capture path into the Inbox on the corporate machine
+    status: parked
+    priority: 11000
+    body: |-
+      The home vault got captures from phone and webhooks. Nothing here writes `Inbox/YYYY-MM-DD-HHmmss.md` files, so triage has no input except chat dumps.
+
+      Next: a small CLI (`scripts/capture.js "text"` or stdin, plus an npm script) that writes a capture from `Templates/capture.md` with `captured:` and `source: cli`. Optionally an editor snippet or a shell alias. It writes files directly, so it doesn't need the server running.
+    ts_created: 2026-09-28T21:19:14Z
+    ts_started: null
+    ts_done: null
+    ts_touched: 2026-09-28T21:19:14Z
+  t3z7:
+    title: Corporate calendar into calendar/events
+    status: parked
+    priority: 12000
+    body: |-
+      `_AI_INSTRUCTIONS.md` and the procedures treat `calendar/events/` as the calendar copy (frontmatter `date`, `end`), but no sync runner exists on the corp machine. Until one does, the morning brief and daily close can't see meetings.
+
+      Next: find out what the corp allows (Outlook ICS publish URL, Graph API with an app registration, or a manual ICS export). Then write a deterministic runner that writes one note per event. Keep it server-side data only (no reasoning), per the "server supplies, client reasons" rule.
+    ts_created: 2026-09-28T21:19:14Z
+    ts_started: null
+    ts_done: null
+    ts_touched: 2026-09-28T21:19:14Z
+  yxs9:
+    title: 'Work procedures: 1:1 prep and performance review prep'
+    status: parked
+    priority: 13000
+    body: |-
+      Two recurring work jobs have no procedure yet:
+      - **1:1 prep:** gather `Follow-ups.md` lines for the person, their `people/<Name>.md`, the last entries in `people/<Name> - 1on1.md`, and open tasks that mention them. Propose an agenda and append it to the 1on1 page.
+      - **Review / brag prep:** build a dated summary for a period from `reference/me/career.md`, `lists/logs/shipped.md`, the weekly accounts and `lists/logs/work-energy.md`.
+
+      Both would be new files in `vault/_procedures/`, served automatically. Waiting for the owner's go-ahead or their own draft, as with triage and daily-close.
+    ts_created: 2026-09-28T21:19:15Z
+    ts_started: null
+    ts_done: null
+    ts_touched: 2026-09-28T21:19:15Z
+  d7iz:
+    title: Server leftovers from the personal vault, for the server refactor
+    status: parked
+    priority: 14000
+    body: |-
+      The server still names personal-vault paths:
+      - `tools/assistant.py` `PLANNING_FILES` includes `lists/creative-projects.md`
+      - the `get_briefing` docstring in `server.py` (around line 1294) names it too
+
+      Both are harmless: the file doesn't exist, so it is simply never read. The canvas and Excalidraw tools still describe themselves as "Obsidian" files, and they have no use without the Obsidian app. Handle these during the owner's server refactor, not before.
+    ts_created: 2026-09-28T21:19:15Z
+    ts_started: null
+    ts_done: null
+    ts_touched: 2026-09-28T21:19:15Z
+  w1gu:
+    title: Clean ARCHITECTURE.md and sweep remaining Obsidian references across project
+    status: done
+    priority: 15000
+    body: |-
+      1. Rewrite ARCHITECTURE.md to eliminate all historical baggage, predecessor comparisons (e.g. C:\JooKoi-vault), and Obsidian app references. Frame it strictly as a standalone corporate second-brain.
+      2. Sweep remaining occurrences of Obsidian across server code (server.py, config.py, filesystem.py, locking.py, bases.py, excalidraw.py, kanban.py, prompts.py, __init__.py, pyproject.toml).
+      3. Update tests and test fixtures to match updated defaults (jookoi-md-mcp-locks, jookoi-md-mcp-tmp, notes.example.com).
+      4. Re-sync uv and verify all 756 pytest tests pass.
+    ts_created: 2026-09-28T21:56:21Z
+    ts_started: 2026-09-28T21:56:21Z
+    ts_done: 2026-09-28T22:04:13Z
+    ts_touched: 2026-09-28T22:04:13Z
+  tf2j:
+    title: Strip authentication and simplify configuration to local-only
+    status: now
+    priority: 16000
+    body: ''
+    ts_created: 2026-09-28T22:15:33Z
+    ts_started: 2026-09-28T22:15:33Z
+    ts_done: null
+    ts_touched: 2026-09-28T22:15:33Z
+  xmo9:
+    title: Trim optional Python runtime dependencies for corporate installation
+    status: done
+    priority: 17000
+    body: ''
+    ts_created: 2026-09-28T22:28:18Z
+    ts_started: 2026-09-28T22:28:18Z
+    ts_done: 2026-09-28T22:29:10Z
+    ts_touched: 2026-09-28T22:29:10Z
