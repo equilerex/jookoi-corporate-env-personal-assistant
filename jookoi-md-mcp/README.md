@@ -13,7 +13,7 @@ It includes three sequential feature layers committed directly into source:
 
 ## Architecture & Features
 
-- **Protocol & Transport:** Streamable HTTP SSE (`/mcp`), running by default on `http://127.0.0.1:8008` (unauthenticated for local workstation access).
+- **Protocol & Transport:** Streamable HTTP SSE (`/mcp`), running by default on `http://127.0.0.1:8008` (unauthenticated on loopback; Host/Origin headers validated against DNS rebinding; a non-loopback `HOST` refuses to start without `API_KEY` or OAuth).
 - **Health Check Endpoint:** `http://127.0.0.1:8008/health` returns index status, last reconcile time, and readiness.
 - **Deterministic Operations:** The server enforces path validation, per-file locking (`.locks/`), revision tracking (`expected_revision`), and audit trails (`audit.log`).
 - **Rich Markdown Tooling:**

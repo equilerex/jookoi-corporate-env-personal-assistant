@@ -2511,7 +2511,15 @@ def main() -> None:
             "Starting jookoi-md-mcp (transport=%s, host=%s, port=%d)",
             _cfg.transport, _cfg.host, _cfg.port,
         )
-        mcp.run(transport=_cfg.transport, host=_cfg.host, port=_cfg.port)
+        # "auto" validates Host and browser Origin on a loopback bind, so a web
+        # page can't reach the vault through DNS rebinding. FastMCP leaves it off
+        # by default.
+        mcp.run(
+            transport=_cfg.transport,
+            host=_cfg.host,
+            port=_cfg.port,
+            host_origin_protection="auto",
+        )
 
 
 if __name__ == "__main__":

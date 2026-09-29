@@ -28,6 +28,7 @@ def _base_env(monkeypatch, tmp_path):
     monkeypatch.delenv("OAUTH_GITHUB_ALLOWED_LOGINS", raising=False)
     monkeypatch.delenv("PUBLIC_BASE_URL", raising=False)
     monkeypatch.delenv("VAULTS_CONFIG", raising=False)
+    monkeypatch.delenv("HOST", raising=False)
 
 
 def test_oauth_requires_both_client_id_and_secret(tmp_path, monkeypatch):
@@ -85,12 +86,45 @@ def test_api_key_and_oauth_can_both_be_configured(tmp_path, monkeypatch):
     assert cfg.oauth_github_client_id == "abc"
 
 
-def test_network_transport_allowed_without_auth(tmp_path, monkeypatch):
+def test_loopback_http_allowed_without_auth(tmp_path, monkeypatch):
     _base_env(monkeypatch, tmp_path)
     monkeypatch.setenv("TRANSPORT", "http")
     cfg = Config()
     assert cfg.transport == "http"
+    assert cfg.host == "127.0.0.1"
     assert cfg.api_key == ""
+
+
+@pytest.mark.parametrize("host", ["localhost", "::1", "[::1]", "127.0.0.2"])
+def test_other_loopback_hosts_allowed_without_auth(tmp_path, monkeypatch, host):
+    _base_env(monkeypatch, tmp_path)
+    monkeypatch.setenv("TRANSPORT", "http")
+    monkeypatch.setenv("HOST", host)
+    assert Config().host == host
+
+
+@pytest.mark.parametrize("host", ["0.0.0.0", "::", "192.168.1.20", "vault.example.com"])
+def test_network_host_without_auth_is_refused(tmp_path, monkeypatch, host):
+    _base_env(monkeypatch, tmp_path)
+    monkeypatch.setenv("TRANSPORT", "http")
+    monkeypatch.setenv("HOST", host)
+    with pytest.raises(ConfigError, match="reachable from the network"):
+        Config()
+
+
+def test_network_host_with_api_key_is_allowed(tmp_path, monkeypatch):
+    _base_env(monkeypatch, tmp_path)
+    monkeypatch.setenv("TRANSPORT", "http")
+    monkeypatch.setenv("HOST", "0.0.0.0")
+    monkeypatch.setenv("API_KEY", "test-key")
+    assert Config().host == "0.0.0.0"
+
+
+def test_stdio_ignores_host(tmp_path, monkeypatch):
+    _base_env(monkeypatch, tmp_path)
+    monkeypatch.setenv("TRANSPORT", "stdio")
+    monkeypatch.setenv("HOST", "0.0.0.0")
+    assert Config().transport == "stdio"
 
 
 def test_security_path_defaults_and_lock_outside_vault(tmp_path, monkeypatch):

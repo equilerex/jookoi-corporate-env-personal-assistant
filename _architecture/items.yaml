@@ -293,3 +293,29 @@ items:
     ts_started: 2026-09-28T22:28:18Z
     ts_done: 2026-09-28T22:29:10Z
     ts_touched: 2026-09-28T22:29:10Z
+  q3gb:
+    title: Run the post-MCP review once the server refactor lands
+    status: parked
+    priority: 18000
+    body: |-
+      The prompt is in `_architecture/prompts/post-mcp-review.md`: paste it into a fresh session at the repo root.
+
+      On 29-09-2026 a static review (tracked `main` only, with no tests run and no client connected) found three problems, all fixed in decision 006: no auth plus no Host/Origin guard, a `0.0.0.0` default host, and mixed checkout paths in `mcp.env.example`. The suite passes (765 passed, 1 skipped), and the guard was verified live.
+
+      Still to run: prompt sections 2 to 5, especially section 4, the end-to-end pass through a real client with a fake secret. It needs a server that stays up (see the Windows background launcher item) or a foreground start in WSL. This covers the test part of epa0 "Restart MCP server and test the corporate vault rules end to end".
+    ts_created: 2026-09-28T23:10:07Z
+    ts_started: null
+    ts_done: null
+    ts_touched: 2026-09-29T00:11:24Z
+  d92d:
+    title: Windows background launcher leaves no server running
+    status: parked
+    priority: 19000
+    body: |-
+      `npm run mcp:start:bg` (`run-mcp.sh --bg` from Git Bash) runs `cmd.exe /c start /b wsl.exe ... ./run.sh`. The server never answers `/health`: this failed twice on 28 and 29 September 2026, and the shell call hung until its timeout. The same `./run.sh` in the foreground in WSL starts fine in about 2 s.
+
+      The likely cause is that the detached `wsl.exe` dies with its parent console. Next step: launch it inside WSL with `nohup ./run.sh >log 2>&1 &` plus `disown` (for example `wsl.exe -d Ubuntu bash -c "cd ... && nohup ./run.sh > run.log 2>&1 & disown"`), then confirm `/health` answers after the Git Bash shell exits. Check `run-mcp.ps1 -Background` too.
+    ts_created: 2026-09-29T00:11:24Z
+    ts_started: null
+    ts_done: null
+    ts_touched: 2026-09-29T00:11:24Z

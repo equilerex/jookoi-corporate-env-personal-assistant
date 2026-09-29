@@ -87,7 +87,7 @@ The server is a standalone FastMCP Python service implementing deterministic sto
 
 - **Host & Port:** `http://127.0.0.1:8008` (Decision 001; binds explicitly to loopback).
 - **Protocol:** FastMCP Streamable HTTP at `/mcp` (SSE transport over HTTP POST/GET) and health status at `/health`.
-- **Authentication:** Unauthenticated on loopback `127.0.0.1`. No headers or tokens required for local AI clients.
+- **Authentication:** Unauthenticated on loopback. No headers or tokens required for local AI clients. `HOST` defaults to `127.0.0.1`, and the server refuses to start on a non-loopback host unless `API_KEY`, a `VAULTS_CONFIG` identity or GitHub OAuth is set. FastMCP's Host/Origin guard (`host_origin_protection="auto"`) rejects foreign `Host` and browser `Origin` headers, which blocks DNS rebinding from web pages (decision 006).
 - **Process Management:**
   - WSL runner: `jookoi-md-mcp/run.sh`
   - Cross-platform shell runner: `run-mcp.sh`

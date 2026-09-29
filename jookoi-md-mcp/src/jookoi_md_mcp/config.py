@@ -9,6 +9,7 @@ vault root.
 from __future__ import annotations
 
 import contextvars
+import ipaddress
 import json
 import math
 import os
@@ -29,6 +30,15 @@ from .storage.policy import (
 
 class ConfigError(Exception):
     pass
+
+
+def _is_loopback_host(host: str) -> bool:
+    if host.strip("[]").lower() == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host.strip("[]")).is_loopback
+    except ValueError:
+        return False
 
 
 def _path_rules(value: object, *, name: str, default: tuple[str, ...] = ()) -> tuple[str, ...]:
@@ -586,7 +596,7 @@ class Config:
                 "VAULTS_CONFIG requires an authenticated network transport; "
                 "TRANSPORT=stdio cannot identify the calling identity"
             )
-        set_value(self, "host", os.environ.get("HOST", "0.0.0.0"))
+        set_value(self, "host", os.environ.get("HOST", "127.0.0.1"))
         set_value(self, "port", int(os.environ.get("PORT", "8000")))
         set_value(self, "public_base_url", os.environ.get("PUBLIC_BASE_URL", "").rstrip("/"))
         set_value(
@@ -619,8 +629,21 @@ class Config:
                     "(used as the OAuth callback base URL, e.g. https://your-server.com)"
                 )
 
-        # Network transport (HTTP loopback) does not require authentication by default
-        # in local workstation deployments.
+        # Loopback HTTP runs without authentication on a single workstation: any
+        # local process can already read the vault files directly, and the
+        # Host/Origin guard in main() blocks browser pages and DNS rebinding.
+        # Anything reachable from the network must authenticate, because the
+        # vault holds credentials (decision 004).
+        if (
+            self.transport != "stdio"
+            and not _is_loopback_host(self.host)
+            and not (self.api_key or self.identities or oauth_configured)
+        ):
+            raise ConfigError(
+                f"HOST={self.host!r} is reachable from the network, but no API_KEY, "
+                "VAULTS_CONFIG identity or GitHub OAuth is configured. Set HOST=127.0.0.1 "
+                "for local use, or configure authentication."
+            )
 
     def resolve_vault_name(self) -> str:
         name = _current_vault_var.get()
