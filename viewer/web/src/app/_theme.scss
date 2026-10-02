@@ -1,0 +1,21 @@
+@mixin light-theme($is-root: false) {
+  @if $is-root {
+    :root {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+@mixin dark-theme($is-root: false) {
+  @media (prefers-color-scheme: dark) {
+    @if $is-root {
+      :root {
+        @content;
+      }
+    } @else {
+      @content;
+    }
+  }
+}

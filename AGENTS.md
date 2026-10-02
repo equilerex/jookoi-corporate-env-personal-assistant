@@ -11,6 +11,7 @@ A second-brain for a corporate environment: plain `.md` files under `vault/`, st
 
 - `_architecture/ARCHITECTURE.md`: start here for anything technical (topology, server, MCP patches, data layers, decisions). `_architecture/plans/` holds design records, `plans/implemented/` finished ones.
 - `vault/`: the data folder. Its rules are `vault/_AI_INSTRUCTIONS.md`; its procedures (triage, quick edits, vault syntax conventions) are `vault/_procedures/`. The MCP server serves both, section by section.
+- `viewer/`: a self-contained local web viewer and editor for `vault/` (or any markdown folder). Not part of the MCP server or the vault rules. `npm run viewer:start`, details in `viewer/README.md`.
 - `jookoi-md-mcp/`: the MCP server itself — a standalone, patched Markdown vault MCP server committed directly into this repo.
 
 ## Rules

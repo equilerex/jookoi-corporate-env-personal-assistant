@@ -119,3 +119,18 @@ All supported AI tools connect to the shared HTTP daemon:
 - **Repo B (Corporate Live):** Hosted on the private corporate git remote. Seeded once from Repo A's skeleton, then enriched with real work dossiers and notes.
 - **Sync Boundary:** Strictly manual, one-directional (Repo A → Repo B) for server updates or procedural changes. No subtrees, submodules, or automatic synchronization.
 - **Commit Discipline:** Commits are explicit and user-triggered only. No automatic commit timers or hooks.
+
+---
+
+## 7. Vault Viewer (`viewer/`)
+
+A human-facing web UI over any folder of markdown files. It is independent of the MCP server and of the rest of the repo: the folder is a start-up argument (`node viewer/server/index.js --root vault`), and deleting `viewer/` changes nothing else. It exists because agents work on the files through their harness, and the owner needs a way to read, search and make small edits. Decision: `plans/decision-history/007-*.md`. Build plans: `plans/implemented/2026-10-02-vault-viewer.md` and `plans/implemented/2026-10-02-md-archive-adaptation-to-vault-files.md` (its deviations section is the accurate record of what shipped).
+
+- **Server** (`viewer/server/`): plain JavaScript, no runtime dependencies, Node 26+. Binds `127.0.0.1`, checks the `Host` header, no authentication (decision 006). Owns everything that touches the disk: file API, path safety, atomic writes, the search index.
+- **UI** (`viewer/web/`): Angular, reused from the old md-archive app with its SQLite backend, login and encryption removed. `viewer/dist/` is gitignored and built by CI (`.github/workflows/ci.yml`, artifact `viewer-dist`); running locally needs `npm run viewer:build` once.
+- **Ids are paths.** A node id is the folder-relative path with `/` separators and travels as a `path` query parameter. Renames and moves are filesystem renames and return the new path.
+- **Search** is an in-memory BM25 index (name, headings, body) rebuilt per changed file by a stat scan at the start of each search. There is no watcher. If the folder ever grows past a few thousand notes, swap the engine behind `SearchIndex.search(query)`.
+- **Concurrency**: last write wins, no conflict check. Saves are atomic and keep line endings and BOM.
+- **Files beyond markdown** are listed. Text files open in the editor without a preview. Binary files can only be downloaded or opened in a tab. Search covers markdown only.
+- **Not covered**: sanitizing of rendered notes, a file watcher, embeds (`![[file]]`), self-hosted fonts.
+- **Config**: the profile (name, title, department) lives in git-ignored `viewer/viewer.config.json`.

@@ -1,0 +1,5 @@
+{
+  "name": "jookoi-viewer-server",
+  "private": true,
+  "type": "module"
+}

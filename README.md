@@ -57,6 +57,10 @@ It pairs a plain Markdown vault (`vault/`) with a local, patched Model Context P
 │   ├── src/                       # Server implementation (FastMCP, tools, storage)
 │   ├── tests/                     # Pytest test suite (755+ tests)
 │   └── mcp.env.example            # Environment configuration template
+├── viewer/                        # Local web viewer and editor for the vault (Node 26+, see viewer/README.md)
+│   ├── server/                    # Dependency-free Node server: file API, search index
+│   ├── web/                       # Angular UI
+│   └── dist/                      # Built UI, gitignored (npm run viewer:build, or CI artifact)
 ├── skills/                        # Agent skills for external harness discovery
 │   └── jookoi-brain-mcp/          # SKILL.md for Copilot / Gemini / Claude harnesses
 ├── scripts/                       # Cross-platform utility and test runners
@@ -240,6 +244,11 @@ npm run mcp:start:win:bg  # Start server in background (PowerShell)
 npm run mcp:stop          # Stop running server process
 npm run mcp:health        # Ping health endpoint
 
+# Vault viewer
+npm run viewer:start    # Browse, search and edit vault/ at http://localhost:4180
+npm run viewer:build    # Rebuild viewer/dist after changing viewer/web
+npm run viewer:test     # Run the viewer server tests
+
 # Testing
 npm test                  # Run pytest test suite in WSL / native
 npm test -- <test_file>   # Run specific test file
@@ -253,6 +262,18 @@ npm run paper-trail:check # Verify schema conformity across managed files
 npm run paper-trail:sweep # Check for unrecorded changes vs items.yaml
 npm run paper-trail:flush # Archive completed development items
 ```
+
+---
+
+## Vault Viewer
+
+`viewer/` is a local web page for reading, searching and editing the vault by hand: a folder tree, markdown with mermaid, full-text search, save, rename, move (drag and drop), delete, download as `.md` and print to PDF. It reads and writes the same files the AI clients use, with no server-side database and no login, and binds to `127.0.0.1` only.
+
+```bash
+npm run viewer:start      # http://localhost:4180, needs Node 26+
+```
+
+Details, the API and the rules the server enforces are in [viewer/README.md](viewer/README.md).
 
 ---
 

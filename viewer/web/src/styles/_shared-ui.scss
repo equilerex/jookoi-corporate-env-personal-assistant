@@ -1,0 +1,110 @@
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.jo-eyebrow {
+  margin: 0 0 0.35rem;
+  color: #64725f;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.jo-text--muted {
+  color: #64725f;
+}
+
+.jo-btn {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 0.7rem 0.95rem;
+  background: #183223;
+  color: #f7f3eb;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+
+  &:hover:not(:disabled) {
+    background: #1f3d2d;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ed883a;
+    outline-offset: 2px;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    background: #183223;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--danger {
+    background: #8c3b2f;
+
+    &:hover:not(:disabled) {
+      background: #a64a3a;
+    }
+
+    &:focus-visible {
+      outline-color: #e11d48;
+    }
+  }
+}
+
+.jo-search {
+  display: grid;
+  gap: 0.4rem;
+
+  &__input {
+    border: 1px solid rgba(24, 50, 35, 0.16);
+    border-radius: 12px;
+    padding: 0.8rem 0.9rem;
+    background: rgba(255, 255, 255, 0.75);
+    transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+
+    &:focus {
+      outline: none;
+      background: #fff;
+      border-color: #183223;
+      box-shadow: 0 0 0 3px rgba(24, 50, 35, 0.1);
+    }
+
+    &:invalid {
+      border-color: #8c3b2f;
+      background: rgba(140, 59, 47, 0.04);
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(140, 59, 47, 0.15);
+      }
+    }
+  }
+}
+
+.jo-alert {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  background: rgba(140, 59, 47, 0.12);
+  color: #8c3b2f;
+
+  &--error {
+    background: rgba(140, 59, 47, 0.12);
+    color: #8c3b2f;
+  }
+}
+
+.jo-empty-state {
+  margin: 0;
+  color: #64725f;
+
+  &--error {
+    color: #8c3b2f;
+  }
+}

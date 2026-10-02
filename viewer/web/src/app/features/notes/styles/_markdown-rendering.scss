@@ -1,0 +1,315 @@
+$font-family-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+
+$markdown-font-size: 1rem;
+$markdown-line-height: 1.7;
+$code-font-size: 0.85rem;
+$code-background: #e3e3e3;
+$code-color: #111827;
+$code-block-background: #282c34;
+
+/* Force color printing for PDF generation */
+* {
+  -webkit-print-color-adjust: exact !important;
+  color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* ==========================================================================
+   UNIFIED MARKDOWN CONTENT STYLES (Screen & Print)
+   ========================================================================== */
+
+.markdown-content,
+.prose-content,
+.message-content {
+  font-size: $markdown-font-size;
+  line-height: $markdown-line-height;
+  color: #111827;
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.2rem;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+    color: inherit;
+  }
+
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.3rem; }
+  h3 { font-size: 1.25rem; }
+  h4 { font-size: 1.125rem; }
+  h5 { font-size: 1rem; }
+  h6 { font-size: 0.875rem; }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  code, pre {
+    font-family: Consolas, 'Söhne Mono', Monaco, 'Andale Mono', 'Ubuntu Mono', monospace !important;
+  }
+
+  // Inline code
+  code:not(.hljs):not([class*='language-']) {
+    background: $code-background !important;
+    color: $code-color !important;
+    padding: 0.2rem 0.4rem !important;
+    border-radius: 4px !important;
+    font-size: 0.9em !important;
+    font-weight: 600 !important;
+  }
+
+  pre {
+    background: $code-block-background !important;
+    color: #fff !important;
+    padding: 1rem !important;
+    border-radius: 8px !important;
+    margin: 1rem 0 !important;
+    font-size: $code-font-size;
+    line-height: 1.5;
+    overflow: visible !important;
+    word-wrap: break-word !important;
+    white-space: pre-wrap !important;
+
+    code {
+      background: transparent !important;
+      color: inherit !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      white-space: pre-wrap !important;
+      word-wrap: break-word !important;
+    }
+  }
+
+  code.hljs,
+  code[class*='language-'],
+  pre[class*='language-'] {
+    background: $code-block-background !important;
+    color: #fff !important;
+    -webkit-hyphens: none;
+    hyphens: none;
+    tab-size: 4;
+    text-align: left;
+    word-break: normal;
+    word-spacing: normal;
+    border-radius: 8px;
+    overflow: visible !important;
+    word-wrap: break-word !important;
+    white-space: pre-wrap !important;
+  }
+
+  code[class='language-plaintext'] {
+    white-space: pre-wrap !important;
+  }
+
+  // Highlight.js theme
+  .hljs-comment { color: hsla(0, 0%, 100%, 0.5) !important; }
+  .hljs-meta { color: hsla(0, 0%, 100%, 0.6) !important; }
+  .hljs-built_in, .hljs-class .hljs-title { color: #e9950c !important; }
+  .hljs-doctag, .hljs-formula, .hljs-keyword, .hljs-literal { color: #2e95d3 !important; }
+  .hljs-addition, .hljs-attribute, .hljs-meta-string, .hljs-regexp, .hljs-string { color: #00a67d !important; }
+  .hljs-attr, .hljs-number, .hljs-selector-attr, .hljs-selector-class, .hljs-selector-pseudo, .hljs-template-variable, .hljs-type, .hljs-variable { color: #df3079 !important; }
+  .hljs-bullet, .hljs-link, .hljs-selector-id, .hljs-symbol, .hljs-title { color: #f22c3d !important; }
+
+  blockquote {
+    border-left: 4px solid #2e95d3;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #6b7280;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f5f5f5 !important;
+      font-weight: 500;
+    }
+  }
+
+  ul, ol {
+    padding-left: 2rem;
+    margin: 1rem 0;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  a {
+    color: #2e95d3;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .code-block-wrapper {
+    position: relative;
+    margin: 1rem 0;
+
+    .copy-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   PRINT-SPECIFIC OVERRIDES
+   ========================================================================== */
+
+@media print {
+  .markdown-content,
+  .prose-content,
+  .message-content {
+    pre,
+    code.hljs,
+    code[class*='language-'],
+    pre[class*='language-'] {
+      background: $code-block-background !important;
+      color: #fff !important;
+      overflow: visible !important;
+      word-wrap: break-word !important;
+      white-space: pre-wrap !important;
+      border: none !important;
+      box-shadow: none !important;
+      -webkit-print-color-adjust: exact !important;
+      color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    code:not(.hljs):not([class*='language-']) {
+      background: #e3e3e3 !important;
+      color: #111827 !important;
+      -webkit-print-color-adjust: exact !important;
+      color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      font-size: 0.875em;
+      font-weight: 500;
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.35rem;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    li {
+      page-break-inside: avoid;
+    }
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .markdown-content,
+  .prose-content,
+  .message-content {
+    font-size: 0.875rem;
+
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.3rem; }
+    h3 { font-size: 1.2rem; }
+
+    pre {
+      border-radius: 0;
+      font-size: 0.75rem;
+      overflow-x: auto;
+    }
+
+    table {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+@media print and (max-width: 768px) {
+  .markdown-content,
+  .prose-content,
+  .message-content {
+    pre {
+      overflow: visible !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   SCROLLBAR STYLES (Screen only)
+   ========================================================================== */
+
+@media screen {
+  ::-webkit-scrollbar {
+    height: 0.1em;
+    width: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 9999px;
+  }
+}
+
+/* The print-only header line under the first heading. */
+.markdown-content .jo-print-meta {
+  display: none;
+}
+
+@media print {
+  /* Buttons that only make sense on screen. */
+  .markdown-content .copy-button {
+    display: none !important;
+  }
+
+  /* Sits right under the title, with a faint gray rule just below it. */
+  .markdown-content h1:has(+ .jo-print-meta) {
+    margin-bottom: 5px;
+  }
+
+  .markdown-content .jo-print-meta {
+    display: block;
+    margin: 0 0 1rem;
+    padding-bottom: 3px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.14);
+    color: rgba(17, 24, 39, 0.7);
+    font-size: 0.85em;
+    line-height: 1.3;
+  }
+
+  .markdown-content .jo-print-meta__time {
+    margin-left: 0.2em;
+    padding-left: 0.6em;
+    border-left: 1px solid rgba(17, 24, 39, 0.3);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}

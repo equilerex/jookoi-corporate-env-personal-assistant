@@ -30,3 +30,6 @@ _jookoi-*
 .env
 .env.local
 *.local.env
+
+# Built by CI (.github/workflows/ci.yml), not committed
+viewer/dist/

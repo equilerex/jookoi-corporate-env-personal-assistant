@@ -28,6 +28,15 @@
     "// mcp:test": "Alias for test: runs jookoi-md-mcp pytest suite.",
     "mcp:test": "node scripts/run-tests.js",
 
+    "// viewer:start": "Start the vault viewer (http://localhost:4180) on vault/. Needs Node 26+.",
+    "viewer:start": "node viewer/server/index.js --root vault",
+
+    "// viewer:build": "Rebuild viewer/dist after changing viewer/web (install once with: npm --prefix viewer install).",
+    "viewer:build": "npm --prefix viewer run build",
+
+    "// viewer:test": "Run the viewer server tests (path safety, write API, search).",
+    "viewer:test": "npm --prefix viewer test",
+
     "// paper-trail:list": "List active (now) development work items in _architecture/items.yaml.",
     "paper-trail:list": "node scripts/paper-trail.js list",
 

@@ -1,0 +1,427 @@
+@use '@angular/material' as mat;
+@use 'sass:color';
+@use 'sass:map';
+@use './app/theme' as th;
+@use './styles/shared-ui';
+@use './app/features/notes/styles/markdown-rendering';
+
+@import 'highlight.js/styles/atom-one-dark.css';
+
+/* Fonts from original base */
+
+/* Material Icons fallback */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v145/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block; 
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Inter Font Family */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+/* Base Styles */
+html {
+  color-scheme: only light;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  @include mat.core();
+
+  $theme: mat.define-theme((
+    color: (
+      theme-type: light,
+      primary: mat.$blue-palette,
+    ),
+    typography: (
+      plain-family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+    ),
+    density: (
+      scale: -3,
+    ),
+  ));
+
+  @include mat.all-component-themes($theme);
+}
+
+body {
+  margin: 0;
+  background: #fafafa;
+  color: #212121;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Global CSS variables */
+:root {
+  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  --font-family-serif: 'Georgia', 'Times New Roman', Times, serif;
+  --primary-color: #3f51b5;
+  --surface-color: #fafafa;
+  --text-color: #212121;
+  --text-muted: #757575;
+  --border-color: #e0e0e0;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --markdown-font-size: var(--font-size-base);
+
+  /* Gray colors  */
+  --gray-200: #e3e3e3; 
+  --gray-600: #424242;
+
+  /* Prose colors */
+  --tw-prose-code: #111827;
+
+  /* Colors */
+  --color-primary: #2563eb;
+  --color-secondary: #64748b;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /* Surface colors */
+  --surface-primary: #ffffff;
+  --surface-secondary: #f8fafc;
+  --surface-tertiary: #f1f5f9;
+
+  /* Text colors */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+
+  /* Border colors */
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-tertiary: #94a3b8;
+}
+
+/* Color Map Logic */
+$_colors: (
+  red-01: oklch(40% 0.1 26),
+  red-02: oklch(49.3% 0.2 26),
+  red-03: oklch(55% 0.2 26),
+  red-04: oklch(63% 0.2 26),
+  red-05: oklch(68.8% 0.2 26),
+  red-06: oklch(86% 0.06 15),
+  green-01: oklch(58% 0.13 145),
+  green-02: oklch(65% 0.13 145),
+  green-03: oklch(83% 0.13 145),
+  blue-01: oklch(36% 0.1 258),
+  blue-02: oklch(57% 0.2 258),
+  blue-03: oklch(72% 0.2 258),
+  blue-04: oklch(83% 0.2 258),
+  blue-05: oklch(91% 0.04 258),
+  blue-06: oklch(96% 0.01 258),
+  purple-01: oklch(47.5% 0.26 295),
+  purple-02: oklch(57.9% 0.26 295),
+  purple-03: oklch(76% 0.15 305),
+  yellow-01: oklch(70% 0.14 81),
+  yellow-02: oklch(83% 0.14 81),
+  orange-01: oklch(69% 0.17 50),
+  orange-02: oklch(79% 0.17 50),
+  gray-1000: oklch(16.93% 0 0),
+  gray-900: oklch(19.37% 0 0),
+  gray-800: oklch(27.68% 0 0),
+  gray-700: oklch(36.98% 0 0),
+  gray-600: oklch(47% 0 0),
+  gray-500: oklch(54.84% 0 0),
+  gray-400: oklch(70.9% 0 0),
+  gray-300: oklch(84.01% 0 0),
+  gray-200: oklch(91.75% 0 0),
+  gray-100: oklch(97.12% 0 0),
+  gray-50: oklch(98.81% 0 0),
+  transparent-01: oklch(0% 0 0 / 0.8),
+  transparent-02: oklch(0% 0 0 / 0.35),
+  transparent-03: oklch(0% 0 0 / 0.2),
+  transparent-04: oklch(0% 0 0 / 0.05),
+  transparent-05: oklch(0% 0 0 / 0),
+);
+
+@mixin _light-colors {
+  --full-contrast: black;
+  --primary-contrast: var(--gray-900);
+  --secondary-contrast: var(--gray-800);
+  --tertiary-contrast: var(--gray-700);
+  --quaternary-contrast: var(--gray-500);
+  --quinary-contrast: var(--gray-300);
+  --senary-contrast: var(--gray-200);
+  --septenary-contrast: var(--gray-100);
+  --octonary-contrast: var(--gray-50);
+  --nonary-contrast: white;
+  --dynamic-red-01: var(--red-03);
+  --dynamic-red-02: var(--red-06);
+  --dynamic-green-01: var(--green-01);
+  --dynamic-green-02: var(--green-03);
+  --dynamic-blue-01: var(--blue-05);
+  --dynamic-blue-02: var(--blue-02);
+  --dynamic-purple-01: var(--purple-01);
+  --dynamic-yellow-01: var(--yellow-01);
+  --dynamic-orange-01: var(--orange-01);
+  --dynamic-transparent-01: var(--transparent-04);
+  --dynamic-transparent-02: var(--transparent-02);
+  --color-background: white;
+  --color-foreground: var(--blue-06);
+  --color-text: black;
+  --color-separator: var(--blue-05);
+
+  /* Special colors from original base */
+  --color-tree-node-element-name: #830042;
+  --color-tree-node-dir-name: #953b13;
+  --color-tree-node-ng-element: #0c3a96;
+  --color-tree-node-console-ref: #146129;
+  --color-tree-node-hovered: #f2f2f2;
+  --color-tree-node-highlighted: #cddffd;
+  --color-tree-node-matched: #f3ce49;
+  --color-property-list-name: #71a2f7;
+}
+
+@mixin _dark-colors {
+  --full-contrast: white;
+  --primary-contrast: var(--gray-50);
+  --secondary-contrast: var(--gray-300);
+  --tertiary-contrast: var(--gray-300);
+  --quaternary-contrast: var(--gray-400);
+  --quinary-contrast: var(--gray-500);
+  --senary-contrast: var(--gray-700);
+  --septenary-contrast: var(--gray-800);
+  --octonary-contrast: var(--gray-900);
+  --nonary-contrast: black;
+  --dynamic-red-01: var(--red-05);
+  --dynamic-red-02: var(--red-01);
+  --dynamic-green-01: var(--green-03);
+  --dynamic-green-02: var(--green-01);
+  --dynamic-blue-01: var(--blue-01);
+  --dynamic-blue-02: var(--blue-03);
+  --dynamic-purple-01: var(--purple-03);
+  --dynamic-yellow-01: var(--yellow-02);
+  --dynamic-orange-01: var(--orange-02);
+  --dynamic-transparent-01: var(--transparent-03);
+  --dynamic-transparent-02: var(--transparent-01);
+  --color-background: var(--gray-800);
+  --color-foreground: var(--gray-700);
+  --color-text: white;
+  --color-separator: var(--gray-600);
+
+  /* Special colors from original base */
+  --color-tree-node-element-name: #71a2f7;
+  --color-tree-node-non-element-name: #71f7b6;
+  --color-tree-node-dir-name: #9ec0f9;
+  --color-tree-node-ng-element: #fe824f;
+  --color-tree-node-console-ref: #a1a1a1;
+  --color-tree-node-hovered: #393939;
+  --color-tree-node-highlighted: #00416c;
+  --color-tree-node-matched: #906921;
+  --color-property-list-name: #0c3a96;
+}
+
+@function convert-to-rgb($map) {
+  $rgb-map: (
+  );
+
+@each $name, $color in $map {
+  $rgb-map: map.merge($rgb-map, ($name: color.to-space($color, rgb)));
+}
+
+@return $rgb-map;
+}
+
+@mixin convert-color-map-to-vars($colors) {
+  @each $name, $color in $colors {
+    --#{$name}: #{$color};
+  }
+}
+
+$colors: convert-to-rgb($_colors);
+
+:root {
+  @include convert-color-map-to-vars($colors);
+  @include _light-colors();
+}
+
+@include th.light-theme(true) {
+  @include _light-colors();
+}
+
+// Light only: the viewer has no dark theme, and a phone in dark mode must not recolour it.
+
+/* Layout classes from original base */
+.app-container {
+  display: flex;
+}
+
+.app-main-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 950px;
+  background: #fafafa;
+}
+
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: min(950px, 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: white;
+  border-left: 1px solid #e0e0e0;
+}
+
+.app-sidebar__header,
+.document-viewer__header {
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  min-height: 64px;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* Global utility classes */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #303f9f;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body,
+  html {
+    width: 950px;
+    background: #fafafa !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .app-sidebar {
+    display: none !important;
+  }
+
+  .app-main-content {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .app-main-content {
+    max-width: 100%;
+    min-height: 60vh;
+  }
+
+  .app-sidebar {
+    left: 0;
+    right: 0;
+    height: 40vh;
+    bottom: 0;
+    top: auto;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+  }
+}

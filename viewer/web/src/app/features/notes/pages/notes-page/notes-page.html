@@ -1,0 +1,384 @@
+<!-- Inline modal -->
+@if (modal(); as m) {
+  <div class="jo-modal-backdrop" (click)="modal.set(null)">
+    <div class="jo-modal" (click)="$event.stopPropagation()">
+      <div class="jo-modal__header">{{ m.label }}</div>
+      <input
+        class="jo-modal__input"
+        type="text"
+        [placeholder]="m.placeholder"
+        [ngModel]="m.value"
+        (ngModelChange)="modal.update(s => s ? { ...s, value: $event } : s)"
+        (keydown.enter)="m.value.trim() && m.confirm(m.value)"
+        (keydown.escape)="modal.set(null)"
+        #modalInput
+      />
+      <div class="jo-modal__actions">
+        <button class="jo-modal__cancel" (click)="modal.set(null)">Cancel</button>
+        <button class="jo-modal__confirm" (click)="m.confirm(m.value)" [disabled]="!m.value.trim()">Confirm</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (settingsOpen()) {
+  <div class="jo-modal-backdrop" (click)="settingsOpen.set(false)">
+    <div class="jo-modal" (click)="$event.stopPropagation()" (keydown.escape)="settingsOpen.set(false)">
+      <div class="jo-modal__header">Profile</div>
+      <p class="jo-modal__hint">Shown under the sidebar title and in the line under the title of a printed note.</p>
+      <label class="jo-modal__field">
+        Name
+        <input class="jo-modal__input" type="text" [ngModel]="settingsDraft().name" (ngModelChange)="updateSettings('name', $event)" />
+      </label>
+      <label class="jo-modal__field">
+        Title
+        <input class="jo-modal__input" type="text" [ngModel]="settingsDraft().title" (ngModelChange)="updateSettings('title', $event)" />
+      </label>
+      <label class="jo-modal__field">
+        Department
+        <input class="jo-modal__input" type="text" [ngModel]="settingsDraft().department" (ngModelChange)="updateSettings('department', $event)" />
+      </label>
+      <div class="jo-modal__actions">
+        <button class="jo-modal__cancel" (click)="settingsOpen.set(false)">Cancel</button>
+        <button class="jo-modal__confirm" (click)="saveSettings()" [disabled]="settingsSaving()">Save</button>
+      </div>
+    </div>
+  </div>
+}
+
+<div class="jo-shell">
+  <!-- Sidebar card -->
+  <aside class="jo-sidebar" [class.jo-sidebar--open]="isMobile() ? drawerOpen() : true" [class.jo-sidebar--mobile]="isMobile()">
+    <div class="jo-sidebar__header">
+      <a routerLink="/" class="jo-sidebar__brand-link">
+        <div class="jo-sidebar__brand">
+          <img class="jo-sidebar__logo" src="assets/logo.svg" alt="" width="32" height="32" />
+          <div>
+            <div class="jo-sidebar__title">JooKoi-Brain-Vault</div>
+            <div class="jo-sidebar__subtitle">{{ profileService.archiveTitle() }}</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="jo-sidebar__actions">
+      <button class="jo-action-btn" (click)="createFolder()">
+        <mat-icon>create_new_folder</mat-icon>
+        New folder
+      </button>
+      <button class="jo-action-btn" (click)="createDocument()">
+        <mat-icon>note_add</mat-icon>
+        New file
+      </button>
+    </div>
+
+    <div class="jo-sidebar__search">
+      <div class="jo-search-wrap">
+        <mat-icon class="jo-search-icon">search</mat-icon>
+        <input
+          class="jo-search-input"
+          type="search"
+          placeholder="Search…"
+          aria-label="Search notes"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event); runSearch()"
+        />
+        <button
+          mat-icon-button
+          class="jo-search-sort"
+          (click)="changeSortBy(treeStore.sortBy() === 'name' ? 'date' : 'name')"
+          [matTooltip]="'Sort: ' + (treeStore.sortBy() === 'name' ? 'Name (A–Z)' : 'Date (Newest)')"
+          aria-label="Toggle sort order"
+        >
+          <mat-icon>sort</mat-icon>
+        </button>
+        @if (searchQuery()) {
+          <button
+            mat-icon-button
+            class="jo-search-clear"
+            (click)="searchQuery.set(''); runSearch()"
+            aria-label="Clear search"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (isSearching()) {
+      <div class="jo-tree-panel">
+        <jo-search-results
+          [results]="searchResults()"
+          [query]="searchQuery()"
+          [loading]="searching()"
+          [selectedId]="selectedNodeId()"
+          (open)="openSearchResult($event)"
+        />
+      </div>
+    }
+
+    <div class="jo-tree-panel" [style.display]="isSearching() ? 'none' : null">
+      @if (treeStore.loading()) {
+        <p class="jo-state-msg" style="animation: pulse 1.5s var(--jo-ease) infinite;">Loading…</p>
+      }
+      @if (treeStore.error()) {
+        <p class="jo-state-msg jo-state-msg--error">{{ treeStore.error() }}</p>
+      }
+      @if (treeStore.isEmpty()) {
+        <p class="jo-state-msg">No folders or notes yet.</p>
+      }
+
+      @for (node of treeStore.visibleTree(); track node.id) {
+        <jo-tree-node
+          [node]="node"
+          [selectedId]="selectedNodeId()"
+          [draggedNodeId]="draggedNodeId()"
+          [getNodePath]="getNodePathSegments"
+          (select)="handleNodeSelection($event)"
+          (toggle)="toggleFolder($event.id)"
+          (dragNode)="handleDragStart($event)"
+          (dragEnd)="handleDragEnd()"
+          (dropNode)="handleDrop($event)"
+          (renameNode)="renameSelected()"
+          (moveNode)="moveSelected()"
+          (deleteNode)="deleteSelected()"
+        />
+      }
+
+      @if (canDropOnRoot()) {
+        <div
+          class="jo-root-drop"
+          [class.jo-root-drop--over]="rootDropOver()"
+          (dragover)="onRootDragOver($event)"
+          (dragleave)="rootDropOver.set(false)"
+          (drop)="onRootDrop($event)"
+        >
+          <mat-icon>vertical_align_top</mat-icon>
+          Drop here to move to the top level
+        </div>
+      }
+    </div>
+
+    <div class="jo-sidebar__footer">
+      <button class="jo-footer-btn" (click)="openSettings()">
+        <mat-icon>settings</mat-icon>
+        Profile settings
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile backdrop -->
+  @if (isMobile() && drawerOpen()) {
+    <div class="jo-backdrop" (click)="drawerOpen.set(false)"></div>
+  }
+
+  <!-- Workspace card -->
+  <main class="jo-workspace" aria-label="Document editor">
+    <!-- Toolbar -->
+    <header class="jo-toolbar no-print">
+      @if (isMobile()) {
+        <button mat-icon-button (click)="drawerOpen.set(!drawerOpen())">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+
+      <span class="jo-toolbar__filename">
+        {{ documentTitle() ?? 'JooKoi-Brain-Vault' }}
+        @if (isDirty()) { <span class="jo-unsaved-badge">UNSAVED</span> }
+      </span>
+
+      <span class="jo-toolbar__spacer"></span>
+
+      <!-- Icon buttons: refresh first, then view mode, copy, move, delete -->
+      <button mat-icon-button class="jo-header-btn" matTooltip="Refresh from disk" aria-label="Refresh from disk" (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+
+      @if (docKind() === 'markdown') {
+        <button
+          mat-icon-button
+          class="jo-view-cycle"
+          (click)="cycleViewMode()"
+          [matTooltip]="viewModeLabel()"
+          [attr.aria-label]="viewModeLabel()"
+        >
+          <mat-icon>{{ viewModeIcon() }}</mat-icon>
+        </button>
+      }
+
+      <button
+        mat-icon-button
+        matTooltip="Copy raw text"
+        aria-label="Copy raw text"
+        (click)="copyToClipboard()"
+        [disabled]="!draftContent() || documentLoading()"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+
+      @if (!isMobile()) {
+        <button mat-icon-button matTooltip="Move" aria-label="Move" (click)="moveSelected()" [disabled]="!selectedNodeId()">
+          <mat-icon>drive_file_move</mat-icon>
+        </button>
+        <button mat-icon-button class="jo-btn-danger-icon" matTooltip="Delete" aria-label="Delete" (click)="deleteSelected()" [disabled]="!selectedNodeId()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      } @else {
+        <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="More actions">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #moreMenu>
+          @if (hasFile() && !isBinary()) {
+            <button mat-menu-item (click)="downloadContent()">
+              <mat-icon>download</mat-icon>Download {{ downloadLabel() }}
+            </button>
+          }
+          @if (docKind() === 'markdown') {
+            <button mat-menu-item (click)="printContent()">
+              <mat-icon>print</mat-icon>PDF
+            </button>
+          }
+          <button mat-menu-item (click)="moveSelected()" [disabled]="!selectedNodeId()">
+            <mat-icon>drive_file_move</mat-icon>Move
+          </button>
+          <mat-divider />
+          <button mat-menu-item (click)="deleteSelected()" [disabled]="!selectedNodeId()" class="jo-menu-item--danger">
+            <mat-icon>delete</mat-icon>Delete
+          </button>
+        </mat-menu>
+      }
+
+      <div class="jo-toolbar__divider"></div>
+
+      <!-- Text buttons: save, download, PDF -->
+      <button
+        class="jo-btn-save"
+        (click)="saveDocument()"
+        [disabled]="!isDirty() || saving()"
+      >
+        <mat-icon>save</mat-icon>
+        {{ saving() ? 'Saving…' : 'Save' }}
+      </button>
+
+      @if (!isMobile()) {
+        @if (hasFile() && !isBinary()) {
+          <button class="jo-btn-secondary" (click)="downloadContent()" [matTooltip]="'Download ' + downloadLabel()" aria-label="Download file">
+            <mat-icon>download</mat-icon>
+            {{ downloadLabel() }}
+          </button>
+        }
+        @if (docKind() === 'markdown') {
+          <button class="jo-btn-secondary" (click)="printContent()" matTooltip="Print or save as PDF" aria-label="Print or save as PDF">
+            <mat-icon>print</mat-icon>
+            PDF
+          </button>
+        }
+      }
+    </header>
+
+    @if (breadcrumbs().length > 0) {
+      <nav class="jo-breadcrumbs no-print" aria-label="breadcrumb">
+        <ol class="jo-breadcrumb-list">
+          @for (crumb of breadcrumbs(); track crumb.name; let last = $last) {
+            <li class="jo-breadcrumb-item">
+              @if (crumb.kind === 'home') { <mat-icon class="jo-breadcrumb-icon">home</mat-icon> }
+              @if (crumb.kind === 'folder') { <mat-icon class="jo-breadcrumb-icon">folder</mat-icon> }
+              @if (crumb.kind === 'document') { <mat-icon class="jo-breadcrumb-icon jo-breadcrumb-icon--item">description</mat-icon> }
+              @if (!last && crumb.folderId) {
+                <button class="jo-breadcrumb-btn" (click)="focusBreadcrumb(crumb.folderId)">{{ crumb.name }}</button>
+              } @else {
+                <span [class.jo-breadcrumb-current]="last">{{ crumb.name }}</span>
+              }
+              @if (!last) { <mat-icon class="jo-breadcrumb-separator">chevron_right</mat-icon> }
+            </li>
+          }
+        </ol>
+      </nav>
+    }
+
+    @if (pageError()) {
+      <p class="jo-alert jo-alert--error">{{ pageError() }}</p>
+    }
+
+    @if (isBinary() && selectedDocument(); as file) {
+      <div class="jo-file-card no-print">
+        <mat-icon class="jo-file-card__icon">insert_drive_file</mat-icon>
+        <div class="jo-file-card__name">{{ file.name }}</div>
+        <div class="jo-file-card__meta">{{ formatSize(file.size) }} · not shown in the viewer</div>
+        <div class="jo-file-card__actions">
+          <a class="jo-btn-secondary" [href]="rawUrl()" target="_blank" rel="noopener noreferrer">
+            <mat-icon>open_in_new</mat-icon>
+            Open in new tab
+          </a>
+          <a class="jo-btn-secondary" [href]="downloadUrl()">
+            <mat-icon>download</mat-icon>
+            Download
+          </a>
+        </div>
+      </div>
+    }
+
+    <div class="jo-editor-panes"
+      [style.display]="isBinary() ? 'none' : null"
+      [class.jo-editor-panes--mobile]="isMobile()"
+      [class.jo-editor-panes--code-only]="paneMode() === 'code' && !isMobile()"
+      [class.jo-editor-panes--preview-only]="paneMode() === 'preview' && !isMobile()"
+    >
+      <div class="jo-pane jo-pane--input" [class.jo-pane--hidden]="isMobile() && mobilePane() !== 'edit' || (!isMobile() && paneMode() === 'preview')">
+        @if (documentLoading()) {
+          <div class="jo-skeleton-loader">
+            <div class="jo-skeleton-line"></div>
+            <div class="jo-skeleton-line jo-skeleton-line--short"></div>
+            <div class="jo-skeleton-line"></div>
+            <div class="jo-skeleton-line"></div>
+            <div class="jo-skeleton-line jo-skeleton-line--short"></div>
+          </div>
+        } @else {
+          <textarea
+            #draftTextarea
+            class="jo-textarea"
+            [ngModel]="draftContent()"
+            (ngModelChange)="draftContent.set($event)"
+            [disabled]="documentLoading()"
+            placeholder="Open a document, or start typing to create one here. It will be named from the first # heading on save."
+          ></textarea>
+        }
+      </div>
+
+      <div class="jo-pane jo-pane--preview" [class.jo-pane--hidden]="isMobile() && mobilePane() !== 'preview' || (!isMobile() && paneMode() === 'code')">
+        @if (documentLoading()) {
+          <div class="jo-skeleton-loader">
+            <div class="jo-skeleton-line"></div>
+            <div class="jo-skeleton-line jo-skeleton-line--short"></div>
+            <div class="jo-skeleton-line"></div>
+            <div class="jo-skeleton-line"></div>
+            <div class="jo-skeleton-line jo-skeleton-line--short"></div>
+          </div>
+        } @else {
+          <jo-markdown-preview
+            [html]="renderedContent()"
+            (scroll)="onRenderScroll($event)"
+            (click)="onPreviewClick($event)"
+          />
+        }
+      </div>
+    </div>
+
+    @if (selectedDocument(); as doc) {
+      <div class="jo-meta no-print">
+        <span>Updated {{ doc.updatedAt | date: 'medium' }}</span>
+        <span>{{ draftContent().length }} chars</span>
+      </div>
+    }
+
+    <button
+      type="button"
+      class="jo-scroll-top"
+      (click)="scrollToTop()"
+      [class.jo-scroll-top--visible]="showScrollTop()"
+      aria-label="Scroll to top"
+    >
+      <mat-icon>arrow_upward</mat-icon>
+    </button>
+  </main>
+</div>

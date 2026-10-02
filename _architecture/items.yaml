@@ -319,3 +319,76 @@ items:
     ts_started: null
     ts_done: null
     ts_touched: 2026-09-29T00:11:24Z
+  xp65:
+    title: 'Vault MD viewer: self-contained viewer/ folder over plain md files'
+    status: done
+    priority: 20000
+    body: |-
+      Done 02-10-2026. `viewer/` is a Node 26 server (no dependencies) plus the reused Angular UI, with the built UI committed in `viewer/dist/`. Run it with `npm run viewer:start`, details in `viewer/README.md` and `_architecture/ARCHITECTURE.md` section 7. Decision 007. Both plans are in `plans/implemented/`, and the adaptation plan's deviations section is the record of what shipped. 76 server tests pass (`npm run viewer:test`).
+
+      Left out on purpose: the frontmatter block (parked item), self-hosted fonts (owner cut it), embeds, sanitizing, a file watcher.
+      Still waiting on the owner to confirm, tracked in their own items: Android in dark mode (clz2 Viewer UX batch 2: mobile colours, search clear button, action button colour) and a text file plus a PDF opened in the viewer (y4vo Viewer: download buttons and non-markdown files).
+      Not done: a run from a fresh clone, and nothing under `viewer/` is committed yet (the owner commits).
+    ts_created: 2026-10-01T21:58:22Z
+    ts_started: 2026-10-01T21:58:22Z
+    ts_done: 2026-10-02T00:48:48Z
+    ts_touched: 2026-10-02T00:48:48Z
+  q14s:
+    title: 'Viewer UX batch 1: refresh, print header, profile settings, title'
+    status: done
+    priority: 21000
+    body: Built and checked in Chrome 02-10-2026 (see the deviations in plans/implemented/2026-10-02-md-archive-adaptation-to-vault-files.md). The printed page itself was not previewed, only the print line in the DOM.
+    ts_created: 2026-10-01T23:36:03Z
+    ts_started: null
+    ts_done: 2026-10-02T00:07:48Z
+    ts_touched: 2026-10-02T00:48:52Z
+  clz2:
+    title: 'Viewer UX batch 2: mobile colours, search clear button, action button colour'
+    status: now
+    priority: 22000
+    body: 'Built 02-10-2026. Search clear button and action button colour checked in Chrome, no-match placeholder works. Android dark mode fix applied (color-scheme only light, dark variable block removed) but NOT verified on a phone: the owner needs to open the viewer on Android in dark mode and report. Done when confirmed.'
+    ts_created: 2026-10-01T23:36:03Z
+    ts_started: 2026-10-02T00:07:48Z
+    ts_done: null
+    ts_touched: 2026-10-02T00:07:48Z
+  y4vo:
+    title: 'Viewer: download buttons and non-markdown files'
+    status: now
+    priority: 23000
+    body: 'Built 02-10-2026: Download .md button (toolbar and mobile menu), text files open editor-only, binary files show a card with open in new tab and download. Server side has tests. In the browser only the Download .md button was seen. NOT yet checked: the binary file card and a text file in the editor, both need a non-markdown file in the folder. Done when the owner confirms.'
+    ts_created: 2026-10-01T23:36:03Z
+    ts_started: 2026-10-02T00:07:49Z
+    ts_done: null
+    ts_touched: 2026-10-02T00:07:49Z
+  qu5s:
+    title: 'Viewer: root-absolute links like /_procedures/x.md go to the wrong URL'
+    status: done
+    priority: 24000
+    body: 'Fixed 02-10-2026 in `link-resolver.ts` and `notes-page.ts` (decoratePreview, onPreviewClick). Checked in Chrome: /_procedures/x.md becomes /notes/_procedures/x.md and opens in the app, relative links and #anchors work, missing targets are muted, external links open in a new tab.'
+    ts_created: 2026-10-01T23:36:04Z
+    ts_started: null
+    ts_done: 2026-10-02T00:07:48Z
+    ts_touched: 2026-10-02T00:07:48Z
+  jz81:
+    title: 'Viewer: show a note''s frontmatter as a collapsible block'
+    status: parked
+    priority: 25000
+    body: 'Left out of the vault viewer when item xp65 Vault MD viewer: self-contained viewer/ folder over plain md files was closed (02-10-2026), because the owner did not ask for it. A note''s leading `---` block currently renders as plain text at the top of the preview. Planned design: strip the block from the rendered body in `viewer/web/src/app/core/services/markdown.service.ts` and show it as a small collapsible block of key and value pairs, printed only when expanded. The plan text is in `_architecture/plans/implemented/2026-10-02-md-archive-adaptation-to-vault-files.md` under "Additions".'
+    ts_created: 2026-10-02T00:48:47Z
+    ts_started: null
+    ts_done: null
+    ts_touched: 2026-10-02T00:48:47Z
+  k6wc:
+    title: CI builds viewer/dist, monthly Dependabot auto-merge
+    status: done
+    priority: 26000
+    body: |-
+      `viewer/dist/` is no longer committed (gitignored). `.github/workflows/ci.yml` runs viewer tests, `ng build` and uploads artifact `viewer-dist`, plus the MCP pytest suite. `.github/dependabot.yml` opens one grouped PR per ecosystem (npm in viewer, uv in jookoi-md-mcp, github-actions) monthly. `.github/workflows/dependabot-automerge.yml` runs `gh pr merge --auto --squash` on those PRs.
+
+      Needs on GitHub: Settings > General > Allow auto-merge, and a branch protection rule on main requiring the CI jobs `Viewer (test + build)` and `MCP server (pytest)`. Without required checks, auto-merge merges immediately without waiting for tests.
+
+      Docs updated: viewer/README.md, README.md, _architecture/ARCHITECTURE.md.
+    ts_created: 2026-10-02T01:08:08Z
+    ts_started: 2026-10-02T01:08:08Z
+    ts_done: 2026-10-02T01:08:11Z
+    ts_touched: 2026-10-02T01:08:11Z
