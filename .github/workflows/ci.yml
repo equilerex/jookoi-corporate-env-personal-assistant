@@ -17,8 +17,8 @@ jobs:
       run:
         working-directory: viewer
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 26
           cache: npm
@@ -27,7 +27,7 @@ jobs:
       - run: npm test
       - run: npm run test:web
       - run: npm run build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: viewer-dist
           path: viewer/dist
@@ -40,8 +40,8 @@ jobs:
       run:
         working-directory: jookoi-md-mcp
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-dependency-glob: jookoi-md-mcp/uv.lock
