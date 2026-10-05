@@ -46,7 +46,7 @@
   </div>
 }
 
-<div class="jo-shell">
+<div class="jo-shell" [style.--jo-sidebar-w.px]="sidebarWidth()">
   <!-- Sidebar card -->
   <aside class="jo-sidebar" [class.jo-sidebar--open]="isMobile() ? drawerOpen() : true" [class.jo-sidebar--mobile]="isMobile()">
     <div class="jo-sidebar__header">
@@ -78,10 +78,10 @@
         <input
           class="jo-search-input"
           type="search"
-          placeholder="Search…"
-          aria-label="Search notes"
-          [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event); runSearch()"
+          placeholder="Filter files…"
+          aria-label="Filter files and folders"
+          [ngModel]="filterSearch.query()"
+          (ngModelChange)="filterSearch.set($event)"
         />
         <button
           mat-icon-button
@@ -92,12 +92,12 @@
         >
           <mat-icon>sort</mat-icon>
         </button>
-        @if (searchQuery()) {
+        @if (filterSearch.query()) {
           <button
             mat-icon-button
             class="jo-search-clear"
-            (click)="searchQuery.set(''); runSearch()"
-            aria-label="Clear search"
+            (click)="filterSearch.set('')"
+            aria-label="Clear filter"
           >
             <mat-icon>close</mat-icon>
           </button>
@@ -105,19 +105,7 @@
       </div>
     </div>
 
-    @if (isSearching()) {
-      <div class="jo-tree-panel">
-        <jo-search-results
-          [results]="searchResults()"
-          [query]="searchQuery()"
-          [loading]="searching()"
-          [selectedId]="selectedNodeId()"
-          (open)="openSearchResult($event)"
-        />
-      </div>
-    }
-
-    <div class="jo-tree-panel" [style.display]="isSearching() ? 'none' : null">
+    <div class="jo-tree-panel">
       @if (treeStore.loading()) {
         <p class="jo-state-msg" style="animation: pulse 1.5s var(--jo-ease) infinite;">Loading…</p>
       }
@@ -128,7 +116,7 @@
         <p class="jo-state-msg">No folders or notes yet.</p>
       }
 
-      @for (node of treeStore.visibleTree(); track node.id) {
+      @for (node of displayTree(); track node.id) {
         <jo-tree-node
           [node]="node"
           [selectedId]="selectedNodeId()"
@@ -166,6 +154,15 @@
       </button>
     </div>
   </aside>
+  @if (!isMobile()) {
+    <jo-resize-handle
+      [width]="sidebarWidth()"
+      [min]="sidebarMin"
+      [max]="sidebarMax"
+      (resized)="setSidebarWidth($event)"
+      (defaultRequested)="setSidebarWidth(sidebarDefault)"
+    />
+  }
 
   <!-- Mobile backdrop -->
   @if (isMobile() && drawerOpen()) {
@@ -186,6 +183,23 @@
         {{ documentTitle() ?? 'JooKoi-Brain-Vault' }}
         @if (isDirty()) { <span class="jo-unsaved-badge">UNSAVED</span> }
       </span>
+
+      <div class="jo-toolbar__search">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          placeholder="Search all notes…"
+          aria-label="Search all notes"
+          [ngModel]="pageSearch.query()"
+          (ngModelChange)="pageSearch.set($event)"
+          (keydown.escape)="pageSearch.set('')"
+        />
+        @if (pageSearch.query()) {
+          <button type="button" class="jo-toolbar__search-clear" (click)="pageSearch.set('')" aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
 
       <span class="jo-toolbar__spacer"></span>
 
@@ -276,6 +290,18 @@
       }
     </header>
 
+    @if (pageSearch.active()) {
+      <div class="jo-search-page no-print">
+        <jo-search-results
+          layout="page"
+          [results]="pageSearch.results()"
+          [query]="pageSearch.query()"
+          [loading]="pageSearch.loading()"
+          [selectedId]="selectedNodeId()"
+          (open)="openSearchResult($event)"
+        />
+      </div>
+    } @else {
     @if (breadcrumbs().length > 0) {
       <nav class="jo-breadcrumbs no-print" aria-label="breadcrumb">
         <ol class="jo-breadcrumb-list">
@@ -369,6 +395,7 @@
         <span>Updated {{ doc.updatedAt | date: 'medium' }}</span>
         <span>{{ draftContent().length }} chars</span>
       </div>
+    }
     }
 
     <button

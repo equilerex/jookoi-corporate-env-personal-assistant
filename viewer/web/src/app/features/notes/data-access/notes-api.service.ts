@@ -90,7 +90,9 @@ export class NotesApiService {
     return this.http.delete<void>(`${this.baseUrl}/document`, NotesApiService.byPath(id));
   }
 
-  search(query: string): Observable<SearchResult[]> {
-    return this.http.get<SearchResult[]>(`${this.baseUrl}/search`, { params: new HttpParams().set('query', query) });
+  search(query: string, limit?: number): Observable<SearchResult[]> {
+    let params = new HttpParams().set('query', query);
+    if (limit) params = params.set('limit', limit);
+    return this.http.get<SearchResult[]>(`${this.baseUrl}/search`, { params });
   }
 }

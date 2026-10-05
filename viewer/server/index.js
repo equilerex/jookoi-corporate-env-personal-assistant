@@ -93,7 +93,8 @@ async function handleApi(req, res, url, rootReal, searchIndex) {
     return sendJson(res, 200, await readDocument(rootReal, url.searchParams.get('path') ?? ''));
   }
   if (req.method === 'GET' && url.pathname === '/api/notes/search') {
-    return sendJson(res, 200, await searchIndex.search(url.searchParams.get('query') ?? ''));
+    const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') ?? '', 10) || 50, 1), 500);
+    return sendJson(res, 200, await searchIndex.search(url.searchParams.get('query') ?? '', { limit }));
   }
   return await handleWrite(req, res, url, rootReal);
 }

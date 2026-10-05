@@ -94,6 +94,11 @@ describe('SearchIndex', () => {
     assert.equal(results[0].id, 'notes/b.md');
   });
 
+  it('honours the limit option', async () => {
+    assert.equal((await index.search('budget', { limit: 2 })).length, 2);
+    assert.equal((await index.search('budget', { limit: 100 })).length, 3);
+  });
+
   it('requires every term', async () => {
     assert.deepEqual((await index.search('budget salaries')).map((r) => r.id), ['notes/a.md']);
     assert.deepEqual(await index.search('budget zzzzzz'), []);

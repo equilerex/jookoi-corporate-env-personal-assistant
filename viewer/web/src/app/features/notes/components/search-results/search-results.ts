@@ -5,6 +5,7 @@ import { SearchResult } from '@shared/models';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'jo-search-results',
+  host: { '[class.jo-page]': "layout() === 'page'" },
   imports: [MatIconModule],
   template: `
     @if (loading() && !results().length) {
@@ -113,6 +114,21 @@ import { SearchResult } from '@shared/models';
       color: var(--jo-text-2);
       overflow-wrap: anywhere;
     }
+    :host(.jo-page) {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 8px 0 32px;
+    }
+    :host(.jo-page) .jo-search-result {
+      padding: 12px 16px;
+      gap: 4px;
+    }
+    :host(.jo-page) .jo-search-result__title { font-size: 1rem; }
+    :host(.jo-page) .jo-search-result__path,
+    :host(.jo-page) .jo-search-result__heading,
+    :host(.jo-page) .jo-search-result__snippet,
+    :host(.jo-page) .jo-search-state,
+    :host(.jo-page) .jo-search-count { font-size: 0.85rem; }
     mark {
       padding: 0 1px;
       border-radius: 2px;
@@ -124,6 +140,7 @@ import { SearchResult } from '@shared/models';
 export class SearchResults {
   readonly results = input.required<SearchResult[]>();
   readonly query = input.required<string>();
+  readonly layout = input<'compact' | 'page'>('compact');
   readonly loading = input(false);
   readonly selectedId = input<string | null>(null);
   readonly open = output<string>();

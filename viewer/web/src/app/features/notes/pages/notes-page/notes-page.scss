@@ -32,7 +32,7 @@
 
 // ── Sidebar card ──────────────────────────────────────────────────────────────
 .jo-sidebar {
-  width: 240px;
+  width: var(--jo-sidebar-w, 240px);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -585,10 +585,7 @@
 
   &--code-only { grid-template-columns: 1fr; }
 
-  &--preview-only {
-    grid-template-columns: 1fr;
-    justify-items: left;
-  }
+  &--preview-only { grid-template-columns: 1fr; }
 }
 
 .jo-pane {
@@ -602,14 +599,6 @@
   & + & {
     border-left: 3px solid #e0e0e0;
     box-shadow: -3px 0 12px rgba(0,0,0,0.06);
-  }
-
-  &--preview {
-    .jo-editor-panes--preview-only & {
-      width: 100%;
-      max-width: 950px;
-      transition: max-width 0.3s var(--jo-ease);
-    }
   }
 
   &--hidden {
@@ -1015,4 +1004,60 @@ jo-markdown-preview {
     background: #bbdefb;
     color: var(--jo-text);
   }
+}
+
+
+// ── Header search + search results page ───────────────────────────────────────
+.jo-toolbar__search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 1 320px;
+  min-width: 0;
+  margin-left: 12px;
+  padding: 0 8px;
+  height: 34px;
+  border: 1px solid var(--jo-glass-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+
+  &:focus-within { border-color: var(--jo-accent); }
+
+  > mat-icon {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: var(--jo-text-2);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--jo-text);
+  }
+}
+
+.jo-toolbar__search-clear {
+  display: inline-flex;
+  flex: none;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--jo-text-2);
+  cursor: pointer;
+
+  mat-icon { width: 18px; height: 18px; font-size: 18px; }
+}
+
+.jo-search-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 24px;
 }

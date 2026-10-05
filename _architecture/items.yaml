@@ -392,3 +392,17 @@ items:
     ts_started: 2026-10-02T01:08:08Z
     ts_done: 2026-10-02T01:08:11Z
     ts_touched: 2026-10-02T01:08:11Z
+  i4v1:
+    title: 'Viewer batch 3: header search, tree filter, resizable sidebar, persisted view mode'
+    status: done
+    priority: -1000
+    body: |-
+      Plan approved 03-10-2026, full text in the session plan (header full-text search replaces content area; sidebar box becomes name + content tree filter; draggable sidebar width; view-only full width; view mode and sidebar width persisted in localStorage).
+
+      No tree filter ever existed in git history (only commit ef61c51 touches viewer/), so it is built new. New units: `persistedSignal`, `createDebouncedSearch`, `tree-filter.ts`, `resize-handle` component, server `limit` param on `/api/notes/search`. Overlaps UI of clz2 Viewer UX batch 2 (search clear button), which still waits on Android dark-mode confirmation.
+
+      Build order: 1 persisted view mode + full-width preview, 2 sidebar resize, 3 header search + page results, 4 tree filter + server limit.
+    ts_created: 2026-10-02T23:36:42Z
+    ts_started: 2026-10-02T23:36:42Z
+    ts_done: 2026-10-02T23:41:15Z
+    ts_touched: 2026-10-02T23:41:15Z

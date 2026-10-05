@@ -22,7 +22,9 @@ The server binds `127.0.0.1` only and rejects any request whose `Host` header is
 
 - **Browse.** A folder tree of every visible file. Dotfiles, symlinks and `node_modules` are hidden.
 - **Read.** Markdown with GFM tables and task lists, highlighted code and mermaid diagrams. Links between notes work as relative links, root-absolute links (`/folder/note.md` means from the root folder) and wikilinks (`[[Page]]`, `[[folder/Page]]`, `[[Page#Heading]]`, `[[Page|text]]`). Links never change style, and one to a missing note opens a "Path not found" page.
-- **Search.** Full-text search over note names, headings and body, ranked, with highlighted snippets and diacritics ignored (`opetaja` finds `Õpetaja`). Every word must match, `"quoted phrases"` match only when adjacent, and the last word matches as a prefix.
+- **Tree filter.** The sidebar box filters the file tree by file and folder name (diacritics ignored), plus documents whose content matches. Matches keep their ancestors open; clearing restores the tree as it was.
+- **Layout.** Drag the edge of the sidebar to resize it (double-click resets, arrow keys work when focused). Sidebar width and the editor view mode (edit, split, view-only) are remembered in the browser. View-only uses the full width.
+- **Search.** The header box, right of the title, runs full-text search and replaces the content area with the results until cleared. Full-text search over note names, headings and body, ranked, with highlighted snippets and diacritics ignored (`opetaja` finds `Õpetaja`). Every word must match, `"quoted phrases"` match only when adjacent, and the last word matches as a prefix.
 - **Edit.** A plain text editor with split, editor-only and preview-only views (one button steps through them). Save, new note, new folder, rename, move (button or drag-and-drop, including a drop strip for the top level) and delete. The last write wins: there is no conflict check, so avoid editing the same file in two places at once.
 - **Other files.** Text files (`.json`, `.ts`, `.txt` and anything that reads as UTF-8, up to 2 MB) open in the editor with no preview. Binary files such as PDFs and images show a card with Open in new tab and Download.
 - **Export.** `.md` downloads the editor text. `PDF` opens the print dialog. The printed page gets a line under the first heading with the name, title, department and the date and time of printing, set in the profile dialog (gear in the sidebar footer, stored in `viewer.config.json`, git-ignored).
@@ -65,7 +67,7 @@ Paths are folder-relative with `/` separators and travel as the `path` query par
 | `GET /api/notes/tree` | folder tree |
 | `GET /api/notes/document?path=` | a file: `kind` (`markdown`, `text`, `binary`), `size`, `content` |
 | `GET /api/notes/raw?path=` | the file as it is. `&download=1` forces a download |
-| `GET /api/notes/search?query=` | ranked results with snippets |
+| `GET /api/notes/search?query=&limit=` | ranked results with snippets |
 | `PUT /api/notes/document?path=` | save `{ content }` |
 | `POST /api/notes/documents` and `/folders` | create `{ name, folderId }` or `{ name, parentId }` |
 | `PATCH /api/notes/{documents,folders}/rename?path=` | `{ name }`, returns the item at its new path |

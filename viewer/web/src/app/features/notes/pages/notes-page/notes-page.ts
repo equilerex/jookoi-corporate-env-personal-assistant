@@ -28,12 +28,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { DocumentDetail, Profile, SearchResult } from '@shared/models';
+import { DocumentDetail, Profile } from '@shared/models';
 import { finalize } from 'rxjs';
 import { MarkdownService } from '../../../../core/services/markdown.service';
 import { getHttpErrorMessage } from '../../../../shared/utils/http-error-message';
+import { createDebouncedSearch } from '../../data-access/debounced-search';
+import { filterTree } from '../../utils/tree-filter';
+import { persistedSignal } from '../../../../shared/utils/persisted-signal';
 import { MarkdownPreview } from '../../components/markdown-preview/markdown-preview';
 import { ProfileService } from '../../../../core/services/profile.service';
+import { ResizeHandle } from '../../components/resize-handle/resize-handle';
 import { SearchResults } from '../../components/search-results/search-results';
 import { TreeNode } from '../../components/tree-node/tree-node';
 import { NotesApiService } from '../../data-access/notes-api.service';
@@ -47,6 +51,7 @@ import { findWikiTarget, resolveHref, slugify } from '../../utils/link-resolver'
     CommonModule,
     FormsModule,
     MarkdownPreview,
+    ResizeHandle,
     SearchResults,
     TreeNode,
     MatButtonModule,
@@ -88,13 +93,28 @@ export class NotesPage {
   protected readonly drawerOpen = signal(false);
   protected readonly isMobile = signal(false);
   protected readonly mobileView = signal<'edit' | 'preview'>('edit');
-  protected readonly editorViewMode = signal<'code' | 'split' | 'preview'>('split');
-  protected readonly searchQuery = signal('');
-  protected readonly searchResults = signal<SearchResult[]>([]);
-  protected readonly searching = signal(false);
-  protected readonly isSearching = computed(() => this.searchQuery().trim().length > 0);
-  private searchTimer: ReturnType<typeof setTimeout> | undefined;
-  private searchSeq = 0;
+  protected readonly editorViewMode = persistedSignal<'code' | 'split' | 'preview'>(
+    'jo-view-mode',
+    'split',
+    (v) => (v === 'code' || v === 'split' || v === 'preview' ? v : undefined),
+  );
+  protected readonly sidebarMin = 200;
+  protected readonly sidebarMax = 480;
+  protected readonly sidebarDefault = 240;
+  protected readonly sidebarWidth = persistedSignal<number>('jo-sidebar-width', this.sidebarDefault, (v) =>
+    typeof v === 'number' && Number.isFinite(v) ? this.clampSidebar(v) : undefined,
+  );
+  /** Header box: full-text search that replaces the content area. */
+  protected readonly pageSearch = createDebouncedSearch(this.api, { onError: (e) => this.setError(e) });
+  /** Sidebar box: tree filter by name, plus documents whose content matches. */
+  protected readonly filterSearch = createDebouncedSearch(this.api, { limit: 500 });
+  protected readonly displayTree = computed(() =>
+    filterTree(
+      this.treeStore.visibleTree(),
+      this.filterSearch.query(),
+      new Set(this.filterSearch.results().map((r) => r.id)),
+    ),
+  );
   protected readonly pageError = signal<string | null>(null);
   protected readonly selectedDocument = signal<DocumentDetail | null>(null);
   protected readonly documentLoading = signal(false);
@@ -205,6 +225,7 @@ export class NotesPage {
 
     this.route.url.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((segments) => {
       const pathSegments = this.toPathSegments(segments);
+      this.pageSearch.set('');
       if (this.treeStore.tree().length === 0) {
         this.treeStore.loadTree(() => this.resolveRouteSegments(pathSegments));
       } else {
@@ -255,6 +276,14 @@ export class NotesPage {
     }[this.editorViewMode()];
   });
 
+  protected setSidebarWidth(px: number): void {
+    this.sidebarWidth.set(this.clampSidebar(px));
+  }
+
+  private clampSidebar(px: number): number {
+    return Math.round(Math.min(this.sidebarMax, Math.max(this.sidebarMin, px)));
+  }
+
   protected cycleViewMode(): void {
     if (this.isMobile()) {
       this.mobileView.set(this.mobileView() === 'edit' ? 'preview' : 'edit');
@@ -296,9 +325,8 @@ export class NotesPage {
       if (openId) {
         this.openDocument(openId);
       }
-      if (this.isSearching()) {
-        this.runSearch();
-      }
+      this.pageSearch.refresh();
+      this.filterSearch.refresh();
     }, true);
   }
 
@@ -477,6 +505,7 @@ export class NotesPage {
       return;
     }
     this.drawerOpen.set(false);
+    this.pageSearch.set('');
     this.navigateToNode(node.id, false);
   }
 
@@ -690,35 +719,8 @@ export class NotesPage {
     return candidate;
   }
 
-  protected runSearch(): void {
-    clearTimeout(this.searchTimer);
-    const query = this.searchQuery().trim();
-    this.searchSeq += 1;
-    if (!query) {
-      this.searchResults.set([]);
-      this.searching.set(false);
-      return;
-    }
-
-    const seq = this.searchSeq;
-    this.searching.set(true);
-    this.searchTimer = setTimeout(() => {
-      this.api.search(query).subscribe({
-        next: (results) => {
-          if (seq !== this.searchSeq) return;
-          this.searchResults.set(results);
-          this.searching.set(false);
-        },
-        error: (error) => {
-          if (seq !== this.searchSeq) return;
-          this.searching.set(false);
-          this.setError(error);
-        },
-      });
-    }, 150);
-  }
-
   protected openSearchResult(id: string): void {
+    this.pageSearch.set('');
     this.navigateToNode(id, false);
     if (this.isMobile()) {
       this.drawerOpen.set(false);
