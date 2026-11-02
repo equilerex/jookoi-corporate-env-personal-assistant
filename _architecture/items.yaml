@@ -28,15 +28,16 @@ items:
     status: now
     priority: 2000
     body: |-
-      Repo A skeleton and MCP runtime are complete and verified end-to-end. Next steps:
-      1. User initializes git in Repo A (`git init`) and creates the baseline commit.
-      2. Clone/init Repo B on the private corp remote.
-      3. Seed Repo B with the Repo A skeleton (vault skeleton, jookoi-md-mcp, launchers, AGENTS.md).
-      4. On the corp machine: verify WSL availability and org Copilot MCP policy.
+      Repo A is now a folder-based second brain: `vault/`, `viewer/`, `AGENTS.md`, `README.md` and `_architecture/`. The MCP server, its launchers and the harness skills were removed under pq9k Replace the MCP server with a folder-based second brain.
+
+      Next steps:
+      1. Commit Repo A explicitly (user-triggered), then clone or init Repo B on the private corp remote.
+      2. Seed Repo B with the Repo A skeleton. Its vault instructions still name MCP tools until the owner decides how the AI should reach the files.
+      3. On the corp machine: verify the viewer runs under Node 26+.
     ts_created: 2026-09-28T19:37:46Z
     ts_started: 2026-09-28T19:37:46Z
     ts_done: null
-    ts_touched: 2026-09-28T19:54:06Z
+    ts_touched: 2026-11-02T09:41:23Z
   l5i1:
     title: Rebuild _architecture/ structure and ARCHITECTURE.md for non-Obsidian corporate stack
     status: done
@@ -277,13 +278,13 @@ items:
     ts_touched: 2026-09-28T22:04:13Z
   tf2j:
     title: Strip authentication and simplify configuration to local-only
-    status: now
+    status: dropped
     priority: 16000
     body: ''
     ts_created: 2026-09-28T22:15:33Z
     ts_started: 2026-09-28T22:15:33Z
     ts_done: null
-    ts_touched: 2026-09-28T22:15:33Z
+    ts_touched: 2026-11-02T09:40:10Z
   xmo9:
     title: Trim optional Python runtime dependencies for corporate installation
     status: done
@@ -406,3 +407,17 @@ items:
     ts_started: 2026-10-02T23:36:42Z
     ts_done: 2026-10-02T23:41:15Z
     ts_touched: 2026-10-02T23:41:15Z
+  pq9k:
+    title: Replace the MCP server with a folder-based second brain
+    status: done
+    priority: 27000
+    body: |-
+      Decision: the AI reaches `vault/` directly as plain files, not through the `jookoi-md-mcp` server. Removing the server, its launchers, the two `jookoi-brain-*` harness skills, the MCP CI job and the MCP docs. `viewer/` stays, since it never depended on the server.
+
+      Kept out of scope on purpose: the owner's vault instructions (`vault/_AI_INSTRUCTIONS.md`, `vault/_procedures/`) still name MCP tools. They are owner files, so they are reported for a separate decision, not rewritten here.
+
+      Next: remove MCP code and config, rewrite README and ARCHITECTURE for the folder model, archive the MCP-only plans and decisions under `_architecture/archive/`.
+    ts_created: 2026-11-02T09:40:07Z
+    ts_started: 2026-11-02T09:40:07Z
+    ts_done: 2026-11-02T09:41:17Z
+    ts_touched: 2026-11-02T09:41:17Z

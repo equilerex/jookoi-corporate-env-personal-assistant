@@ -19,7 +19,7 @@ The personal vault at `C:\JooKoi-vault` relies on the Obsidian desktop app and c
 Decouple completely:
 - No passwords, PINs, tokens, or credentials may be written into vault markdown notes.
 - Accounts are recorded as service references and usernames only in `reference/accounts.md`, pointing to the enterprise password manager or secure vault.
-- Retain markdown task format (`- [ ] text ...`) and heading structures purely as data contracts for the MCP server (`vault_add_task`, `vault_complete_task`, `vault_get_briefing`), without requiring the Obsidian app.
+- Retain markdown task format (`- [ ] text ...`) and heading structures as plain data contracts that the AI reads and writes directly, without requiring the Obsidian app.
 
 ## Why not the alternatives
 

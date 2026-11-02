@@ -32,18 +32,3 @@ jobs:
           name: viewer-dist
           path: viewer/dist
           if-no-files-found: error
-
-  mcp:
-    name: MCP server (pytest)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: jookoi-md-mcp
-    steps:
-      - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: jookoi-md-mcp/uv.lock
-      - run: uv sync --frozen
-      - run: uv run pytest

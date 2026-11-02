@@ -12,7 +12,7 @@ Decision 002 and the first corporate instructions (003) kept credential values o
 
 - Pointer-only: `reference/accounts.md` names the system, the value lives in a password manager.
 - Values in normal tracked notes (`accounts.md`, project pages).
-- Values in one `_jookoi-` prefixed file that git ignores, readable and writable through the MCP server like any note.
+- Values in one `_jookoi-` prefixed file that git ignores, readable and writable like any other note.
 
 ## Decision
 
