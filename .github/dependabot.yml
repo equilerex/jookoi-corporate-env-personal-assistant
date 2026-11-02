@@ -7,13 +7,6 @@ updates:
     groups:
       npm-all:
         patterns: ["*"]
-  - package-ecosystem: uv
-    directory: /jookoi-md-mcp
-    schedule:
-      interval: monthly
-    groups:
-      uv-all:
-        patterns: ["*"]
   - package-ecosystem: github-actions
     directory: /
     schedule:

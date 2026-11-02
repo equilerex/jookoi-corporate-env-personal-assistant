@@ -30,4 +30,4 @@ A dual-backend md-archive carries SQL, auth, and the encrypted-note flag into a 
 
 ## Next step
 
-Write the build plan under `_architecture/plans/` (stack, file-write rules, loopback guard from decision 006), then build under item xp65.
+Write the build plan under `_architecture/plans/` (stack, file-write rules, loopback guard, no auth), then build under item xp65.
