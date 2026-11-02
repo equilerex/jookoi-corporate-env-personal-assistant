@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Local markdown viewer server. Serves the built UI from ../dist and a JSON API over a folder of
-// .md files. No dependencies. Loopback only, no auth (decision 006): it runs on the owner's machine.
+// .md files. No dependencies. Loopback only, no auth: it runs on the owner's machine.
 //
 //   node server/index.js --root <folder> [--port 4180]
 import { createReadStream } from 'node:fs';
